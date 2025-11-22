@@ -1058,13 +1058,17 @@
         // ============================================
         async function getAccessToken() {
             const workerUrl = 'young-snowflake-1f82.williamriveragr.workers.dev';
-
+            const data = {
+              FirstName: "TEST",
+              LastName: "TEST",
+              Company: "TEST.INC"
+            };
             const response = await fetch(workerUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
-                body: params
+                body: data
             });
 
             if (!response.ok) {
