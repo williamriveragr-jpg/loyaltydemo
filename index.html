@@ -936,7 +936,7 @@
                 // Simular llamada API (reemplazar con llamada real a Salesforce)
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 
-                // const result = await createLoyaltyProgramMember(formData);
+                const result = await createLoyaltyProgramMember(formData);
                 
                 showMessage('¡Registro exitoso! Número de membresía: ' + formData.MembershipNumber, 'success');
                 
@@ -1057,18 +1057,107 @@
         // FUNCIONES SALESFORCE API (PLACEHOLDER)
         // ============================================
         async function getAccessToken() {
-            // Implementar autenticación OAuth
-            return 'mock_token';
+            const workerUrl = 'young-snowflake-1f82.williamriveragr.workers.dev';
+
+            const response = await fetch(workerUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: params
+            });
+
+            if (!response.ok) {
+                throw new Error('Error de autenticación con Salesforce');
+            }
+
+            const data = await response.json();
+            return data.access_token;
         }
 
+        /**
+         * Crear LoyaltyProgramMember en Salesforce
+         */
         async function createLoyaltyProgramMember(memberData) {
-            // Implementar creación de miembro
-            return { success: true, id: 'mock_id' };
+            // Obtener token de acceso
+            const accessToken = await getAccessToken();
+
+            // Preparar payload
+            const payload = {
+                MembershipNumber: memberData.MembershipNumber,
+                ContactId: await getOrCreateContact(accessToken, memberData),
+                ProgramId: memberData.ProgramId,
+                EnrollmentChannel: memberData.EnrollmentChannel,
+                EnrollmentDate: memberData.EnrollmentDate,
+                MemberStatus: 'Active',
+                MemberType: 'Individual'
+            };
+
+            // Crear registro
+            const apiUrl = `${SALESFORCE_CONFIG.instanceUrl}/services/data/v60.0/sobjects/LoyaltyProgramMember`;
+            
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error[0]?.message || 'Error al crear miembro');
+            }
+
+            return await response.json();
         }
-        
-        async function searchMember(searchTerm) {
-            // Implementar búsqueda de miembro
-            return { success: true, data: {} };
+
+        /**
+         * Obtener o crear Contact
+         */
+        async function getOrCreateContact(accessToken, memberData) {
+            // Buscar contact existente por email
+            const queryUrl = `${SALESFORCE_CONFIG.instanceUrl}/services/data/v60.0/query?q=SELECT+Id+FROM+Contact+WHERE+Email='${memberData.Email}'+LIMIT+1`;
+            
+            const searchResponse = await fetch(queryUrl, {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`
+                }
+            });
+
+            const searchData = await searchResponse.json();
+
+            if (searchData.totalSize > 0) {
+                return searchData.records[0].Id;
+            }
+
+            // Crear nuevo contact
+            const contactPayload = {
+                FirstName: memberData.FirstName,
+                LastName: memberData.LastName,
+                Email: memberData.Email,
+                MobilePhone: memberData.MobilePhone,
+                Birthdate: memberData.Birthdate || null
+            };
+
+            const createUrl = `${SALESFORCE_CONFIG.instanceUrl}/services/data/v60.0/sobjects/Contact`;
+            
+            const createResponse = await fetch(createUrl, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(contactPayload)
+            });
+
+            if (!createResponse.ok) {
+                throw new Error('Error al crear contacto');
+            }
+
+            const contactData = await createResponse.json();
+            return contactData.id;
         }
     </script>
 </body>
