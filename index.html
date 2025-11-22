@@ -853,17 +853,6 @@
     </div>
 
     <script>
-        // ============================================
-        // CONFIGURACIÓN SALESFORCE
-        // ============================================
-        const SALESFORCE_CONFIG = {
-            instanceUrl: 'https://your-instance.salesforce.com',
-            clientId: 'TU_CONSUMER_KEY',
-            clientSecret: 'TU_CONSUMER_SECRET',
-            username: 'tu_usuario@salesforce.com',
-            password: 'TU_PASSWORD',
-            loyaltyProgramId: 'LOYALTY_PROGRAM_ID'
-        };
 
         // ============================================
         // NAVEGACIÓN
@@ -936,7 +925,7 @@
                 // Simular llamada API (reemplazar con llamada real a Salesforce)
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 
-                const result = await createLoyaltyProgramMember(formData);
+                const accessToken = await getAccessToken();
                 
                 showMessage('¡Registro exitoso! Número de membresía: ' + formData.MembershipNumber, 'success');
                 
@@ -1084,7 +1073,7 @@
          */
         async function createLoyaltyProgramMember(memberData) {
             // Obtener token de acceso
-            const accessToken = await getAccessToken();
+            
 
             // Preparar payload
             const payload = {
@@ -1098,23 +1087,7 @@
             };
 
             // Crear registro
-            const apiUrl = `${SALESFORCE_CONFIG.instanceUrl}/services/data/v60.0/sobjects/LoyaltyProgramMember`;
-            
-            const response = await fetch(apiUrl, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            });
 
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error[0]?.message || 'Error al crear miembro');
-            }
-
-            return await response.json();
         }
 
         /**
@@ -1122,19 +1095,6 @@
          */
         async function getOrCreateContact(accessToken, memberData) {
             // Buscar contact existente por email
-            const queryUrl = `${SALESFORCE_CONFIG.instanceUrl}/services/data/v60.0/query?q=SELECT+Id+FROM+Contact+WHERE+Email='${memberData.Email}'+LIMIT+1`;
-            
-            const searchResponse = await fetch(queryUrl, {
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`
-                }
-            });
-
-            const searchData = await searchResponse.json();
-
-            if (searchData.totalSize > 0) {
-                return searchData.records[0].Id;
-            }
 
             // Crear nuevo contact
             const contactPayload = {
@@ -1145,23 +1105,6 @@
                 Birthdate: memberData.Birthdate || null
             };
 
-            const createUrl = `${SALESFORCE_CONFIG.instanceUrl}/services/data/v60.0/sobjects/Contact`;
-            
-            const createResponse = await fetch(createUrl, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(contactPayload)
-            });
-
-            if (!createResponse.ok) {
-                throw new Error('Error al crear contacto');
-            }
-
-            const contactData = await createResponse.json();
-            return contactData.id;
         }
     </script>
 </body>
