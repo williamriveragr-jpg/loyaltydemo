@@ -902,14 +902,14 @@
             }
 
             const formData = {
-                FirstName: document.getElementById('firstName').value.trim(),
-                LastName: document.getElementById('lastName').value.trim(),
-                Email: document.getElementById('email').value.trim(),
-                MobilePhone: document.getElementById('phone').value.trim(),
-                Birthdate: document.getElementById('birthDate').value,
-                MembershipNumber: generateMembershipNumber(),
-                EnrollmentChannel: document.getElementById('enrollmentChannel').value,
-                EnrollmentDate: new Date().toISOString().split('T')[0]
+                firstName: document.getElementById('firstName').value.trim(),
+                lastName: document.getElementById('lastName').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                mobilePhone: document.getElementById('phone').value.trim(),
+                birthdate: document.getElementById('birthDate').value,
+                membershipNumber: generateMembershipNumber(),
+                enrollmentChannel: document.getElementById('enrollmentChannel').value,
+                enrollmentDate: new Date().toISOString().split('T')[0]
             };
             
             // Mostrar número generado
