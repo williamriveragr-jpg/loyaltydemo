@@ -803,7 +803,7 @@
         <!-- SECCIÓN CONSULTAR PERFIL -->
         <section id="perfil" class="section">
             <h1>Consultar Perfil de Miembro</h1>
-            <p class="subtitle">Busca por email o número de membresía</p>
+            <p class="subtitle">Busca por número de membresía</p>
             
             <div class="profile-search">
                 <input type="text" id="searchInput" placeholder="Ingresa tu número de membresía">
@@ -1090,7 +1090,7 @@ function displayCurrencies(currencies) {
         // ============================================
         function buyProduct(productName, points) {
             if (confirm(`¿Deseas canjear ${points.toLocaleString()} puntos por ${productName}?`)) {
-                alert('¡Producto canjeado exitosamente! Se ha enviado un email de confirmación.');
+                alert('¡Producto canjeado exitosamente!');
                 // Aquí iría la lógica real de canje con Salesforce
             }
         }
