@@ -911,7 +911,7 @@
                 EnrollmentChannel: document.getElementById('enrollmentChannel').value,
                 EnrollmentDate: new Date().toISOString().split('T')[0]
             };
-            const accessToken = await getAccessToken();
+            
             // Mostrar número generado
             document.getElementById('membershipNumber').value = formData.MembershipNumber;
 
@@ -923,7 +923,7 @@
                 // Simular llamada API (reemplazar con llamada real a Salesforce)
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 
-                // const result = await createLoyaltyProgramMember(formData);
+                const result = await createLoyaltyProgramMember(formData);
                 
                 showMessage('¡Registro exitoso! Número de membresía: ' + formData.MembershipNumber, 'success');
                 
@@ -1074,6 +1074,39 @@
             // Implementar búsqueda de miembro
             return { success: true, data: {} };
         }
+
+        async function createMember(formData) {
+    const response = await fetch('https://young-snowflake-1f82.williamriveragr.workers.dev', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            operation: "createMember",
+            data: {
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                email: formData.email,
+                phone: formData.phone,
+                birthDate: formData.birthDate,
+                programId: "0lpd20000001aO1AAI",
+                enrollmentChannel: formData.enrollmentChannel || "Web"
+            }
+        })
+    });
+
+    const result = await response.json();
+    console.log(result);
+    // {
+    //   success: true,
+    //   message: "Miembro creado exitosamente",
+    //   data: {
+    //     memberId: "0lM...",
+    //     contactId: "003...",
+    //     membershipNumber: "LM12345678901"
+    //   }
+    // }
+}
     </script>
 </body>
 </html>
