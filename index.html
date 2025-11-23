@@ -799,6 +799,68 @@
                 </div>
             </div>
         </section>
+    <!-- SECCIÓN SPIN THE WHEEL -->
+        <section id="rueda" class="section">
+            <div class="wheel-container">
+                <h1>🎰 Prueba tu Suerte</h1>
+                <p class="subtitle">¡Gira la ruleta y gana premios increíbles!</p>
+
+                <!-- Login de la Ruleta -->
+                <div class="wheel-login" id="wheelLogin">
+                    <div class="wheel-info">
+                        <h3>Premios disponibles:</h3>
+                        <ul>
+                            <li>100 Puntos Extra</li>
+                            <li>500 Puntos Bonus</li>
+                            <li>Descuento 10%</li>
+                            <li>Noche Gratis</li>
+                            <li>Upgrade de Habitación</li>
+                            <li>Cena para 2</li>
+                            <li>Spa Gratis</li>
+                            <li>Mejor Suerte</li>
+                        </ul>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="wheelMembershipNumber">Número de Membresía <span class="required">*</span></label>
+                        <input type="text" id="wheelMembershipNumber" placeholder="Ingresa tu número de membresía">
+                    </div>
+
+                    <button class="btn" onclick="startWheel()">Empezar a Jugar</button>
+                    
+                    <div class="loading" id="wheelLoginLoading">
+                        <div class="spinner"></div>
+                        <p>Verificando membresía...</p>
+                    </div>
+                    
+                    <div class="message" id="wheelLoginMessage"></div>
+                </div>
+
+                <!-- Juego de la Ruleta -->
+                <div class="wheel-game" id="wheelGame">
+                    <div class="wheel-wrapper">
+                        <div class="wheel-pointer"></div>
+                        <div class="wheel" id="wheel">
+                            <!-- Segmentos generados dinámicamente -->
+                        </div>
+                        <div class="wheel-center"></div>
+                    </div>
+
+                    <button class="spin-button" id="spinButton" onclick="spinWheel()">
+                        🎰 GIRAR RULETA
+                    </button>
+
+                    <div class="wheel-result" id="wheelResult">
+                        <h3>🎉 ¡Felicidades!</h3>
+                        <p id="wheelPrize">Has ganado: <strong>500 Puntos</strong></p>
+                    </div>
+
+                    <button class="btn btn-secondary" style="margin-top: 20px;" onclick="resetWheel()">
+                        Jugar de Nuevo
+                    </button>
+                </div>
+            </div>
+        </section>
 
         <!-- SECCIÓN CONSULTAR PERFIL -->
         <section id="perfil" class="section">
@@ -1143,16 +1205,128 @@ function displayCurrencies(currencies) {
 
     const result = await response.json();
     console.log(result);
-    // {
-    //   success: true,
-    //   message: "Miembro creado exitosamente",
-    //   data: {
-    //     memberId: "0lM...",
-    //     contactId: "003...",
-    //     membershipNumber: "LM12345678901"
-    //   }
-    // }
 }
+
+        // ============================================
+        // SPIN THE WHEEL
+        // ============================================
+        function initWheel() {
+            const wheel = document.getElementById('wheel');
+            const segmentAngle = 360 / wheelPrizes.length;
+            
+            wheelPrizes.forEach((prize, index) => {
+                const segment = document.createElement('div');
+                segment.className = 'wheel-segment';
+                segment.style.transform = `rotate(${index * segmentAngle}deg)`;
+                segment.style.background = prize.color;
+                
+                const label = document.createElement('span');
+                label.textContent = prize.name;
+                segment.appendChild(label);
+                
+                wheel.appendChild(segment);
+            });
+        }
+
+        async function startWheel() {
+            const membershipNumber = document.getElementById('wheelMembershipNumber').value.trim();
+            const loginLoading = document.getElementById('wheelLoginLoading');
+            const loginMessage = document.getElementById('wheelLoginMessage');
+            
+            if (!membershipNumber) {
+                showWheelLoginMessage('Por favor, ingresa tu número de membresía', 'error');
+                return;
+            }
+            
+            loginLoading.classList.add('show');
+            loginMessage.classList.remove('show');
+            
+            try {
+                const response = await fetch(WORKER_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        operation: "getMember",
+                        data: { membershipNumber }
+                    })
+                });
+
+                const result = await response.json();
+                
+                if (result.success) {
+                    currentMember = result.data;
+                    document.getElementById('wheelLogin').style.display = 'none';
+                    document.getElementById('wheelGame').classList.add('active');
+                    initWheel();
+                } else {
+                    showWheelLoginMessage('Miembro no encontrado. Verifica tu número.', 'error');
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showWheelLoginMessage('Error al verificar membresía.', 'error');
+            } finally {
+                loginLoading.classList.remove('show');
+            }
+        }
+
+        async function spinWheel() {
+            if (isSpinning) return;
+            
+            isSpinning = true;
+            const spinButton = document.getElementById('spinButton');
+            const wheel = document.getElementById('wheel');
+            const resultDiv = document.getElementById('wheelResult');
+            
+            spinButton.disabled = true;
+            resultDiv.classList.remove('show');
+            
+            // Seleccionar premio aleatorio
+            const randomIndex = Math.floor(Math.random() * wheelPrizes.length);
+            const prize = wheelPrizes[randomIndex];
+            
+            // Calcular ángulo de rotación
+            const segmentAngle = 360 / wheelPrizes.length;
+            const targetAngle = (360 - (randomIndex * segmentAngle)) + (segmentAngle / 2);
+            const totalRotation = 360 * 5 + targetAngle; // 5 vueltas completas + ángulo objetivo
+            
+            // Aplicar rotación
+            wheel.style.transform = `rotate(${totalRotation}deg)`;
+            
+            // Esperar animación
+            setTimeout(async () => {
+                // Mostrar resultado
+                document.getElementById('wheelPrize').innerHTML = `Has ganado: <strong>${prize.name}</strong>`;
+                resultDiv.classList.add('show');
+                
+                // Si ganó puntos, crear transacción
+                if (prize.value > 0) {
+                    try {
+                        await createTransaction(currentMember.memberId, prize.value, 'Spin the Wheel');
+                    } catch (error) {
+                        console.error('Error al acreditar puntos:', error);
+                    }
+                }
+                
+                isSpinning = false;
+                spinButton.disabled = false;
+            }, 4000);
+        }
+
+        function resetWheel() {
+            document.getElementById('wheelGame').classList.remove('active');
+            document.getElementById('wheelLogin').style.display = 'block';
+            document.getElementById('wheelMembershipNumber').value = '';
+            document.getElementById('wheelResult').classList.remove('show');
+            document.getElementById('wheel').style.transform = 'rotate(0deg)';
+            document.getElementById('wheel').innerHTML = '';
+            currentMember = null;
+        }
+        function showWheelLoginMessage(text, type) {
+            const loginMessage = document.getElementById('wheelLoginMessage');
+            loginMessage.textContent = text;
+            loginMessage.className = `message ${type} show`;
+        }
     </script>
 </body>
 </html>
