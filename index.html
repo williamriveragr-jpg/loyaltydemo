@@ -443,7 +443,39 @@
             color: #333;
             font-weight: 600;
         }
-        
+        /* Animación para tarjetas de moneda */
+.currency-card {
+    animation: slideIn 0.5s ease-out forwards;
+    opacity: 0;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Colores alternativos para cada moneda */
+.currency-card:nth-child(1) .stat-value {
+    color: #667eea;
+}
+
+.currency-card:nth-child(2) .stat-value {
+    color: #764ba2;
+}
+
+.currency-card:nth-child(3) .stat-value {
+    color: #f093fb;
+}
+
+.currency-card:nth-child(4) .stat-value {
+    color: #4facfe;
+}
         /* ============================================
            MENSAJES Y LOADING
            ============================================ */
@@ -940,74 +972,118 @@
                 loading.classList.remove('show');
             }
         });
+// ============================================
+// BÚSQUEDA DE PERFIL
+// ============================================
+async function searchProfile() {
+    const searchInput = document.getElementById('searchInput').value.trim();
+    const loadingProfile = document.getElementById('loadingProfile');
+    const profileMessage = document.getElementById('profileMessage');
+    const profileCard = document.getElementById('profileCard');
+    
+    if (!searchInput) {
+        showProfileMessage('Por favor, ingresa un número de membresía', 'error');
+        return;
+    }
+    
+    loadingProfile.classList.add('show');
+    profileMessage.classList.remove('show');
+    profileCard.classList.remove('show');
+    
+    try {
+        const response = await fetch('https://young-snowflake-1f82.williamriveragr.workers.dev', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                operation: "getMember",
+                data: {
+                    membershipNumber: searchInput
+                }
+            })
+        });
 
-        // ============================================
-        // BÚSQUEDA DE PERFIL
-        // ============================================
-        async function searchProfile() {
-            const searchInput = document.getElementById('searchInput').value.trim();
-            const loadingProfile = document.getElementById('loadingProfile');
-            const profileMessage = document.getElementById('profileMessage');
-            const profileCard = document.getElementById('profileCard');
-            
-            if (!searchInput) {
-                showProfileMessage('Por favor, ingresa un email o número de membresía', 'error');
-                return;
-            }
-            
-            loadingProfile.classList.add('show');
-            profileMessage.classList.remove('show');
-            profileCard.classList.remove('show');
-            
-            try {
-                // Simular búsqueda (reemplazar con llamada real a Salesforce)
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                
-                // Datos de ejemplo
-                const mockProfile = {
-                    firstName: 'John',
-                    lastName: 'Doe',
-                    email: searchInput.includes('@') ? searchInput : 'john.doe@email.com',
-                    phone: '+34 600 123 456',
-                    membershipNumber: searchInput.includes('LM') ? searchInput : 'LM' + Date.now().toString().slice(-9),
-                    tier: 'Gold Member',
-                    totalPoints: 25450,
-                    availablePoints: 18200,
-                    tierPoints: 7250,
-                    enrollmentDate: '15/01/2023',
-                    enrollmentChannel: 'Web',
-                    status: 'Activo',
-                    memberSince: '2 años'
-                };
-                
-                displayProfile(mockProfile);
-                profileCard.classList.add('show');
-                
-            } catch (error) {
-                console.error('Error:', error);
-                showProfileMessage('Perfil no encontrado. Verifica los datos ingresados.', 'error');
-            } finally {
-                loadingProfile.classList.remove('show');
-            }
+        const result = await response.json();
+        
+        if (!result.success) {
+            showProfileMessage(result.error || 'Perfil no encontrado. Verifica el número de membresía.', 'error');
+            return;
         }
         
-        function displayProfile(profile) {
-            const initials = (profile.firstName.charAt(0) + profile.lastName.charAt(0)).toUpperCase();
-            
-            document.getElementById('profileAvatar').textContent = initials;
-            document.getElementById('profileName').textContent = `${profile.firstName} ${profile.lastName}`;
-            document.getElementById('profileTier').textContent = profile.tier;
-            document.getElementById('totalPoints').textContent = profile.totalPoints.toLocaleString();
-            document.getElementById('availablePoints').textContent = profile.availablePoints.toLocaleString();
-            document.getElementById('tierPoints').textContent = profile.tierPoints.toLocaleString();
-            document.getElementById('memberSince').textContent = profile.memberSince;
-            document.getElementById('profileEmail').textContent = profile.email;
-            document.getElementById('profilePhone').textContent = profile.phone;
-            document.getElementById('profileMembership').textContent = profile.membershipNumber;
-            document.getElementById('profileChannel').textContent = profile.enrollmentChannel;
-            document.getElementById('profileEnrollmentDate').textContent = profile.enrollmentDate;
-            document.getElementById('profileStatus').textContent = profile.status;
-        }
+        displayProfile(result.data);
+        profileCard.classList.add('show');
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showProfileMessage('Error al buscar perfil. Intenta nuevamente.', 'error');
+    } finally {
+        loadingProfile.classList.remove('show');
+    }
+}
+
+function displayProfile(profile) {
+    // Avatar con iniciales
+    const initials = (profile.contact.firstName.charAt(0) + profile.contact.lastName.charAt(0)).toUpperCase();
+    document.getElementById('profileAvatar').textContent = initials;
+    
+    // Información básica
+    document.getElementById('profileName').textContent = `${profile.contact.firstName} ${profile.contact.lastName}`;
+    document.getElementById('profileTier').textContent = profile.tier;
+    
+    // Puntos totales
+    document.getElementById('totalPoints').textContent = profile.points.total.toLocaleString();
+    
+    // Tiempo como miembro
+    document.getElementById('memberSince').textContent = profile.memberSince;
+    
+    // Información de contacto
+    document.getElementById('profileEmail').textContent = profile.contact.email;
+    document.getElementById('profilePhone').textContent = profile.contact.phone;
+    document.getElementById('profileMembership').textContent = profile.membershipNumber;
+    document.getElementById('profileChannel').textContent = profile.enrollmentChannel;
+    
+    // Formatear fecha de inscripción
+    const enrollmentDate = new Date(profile.enrollmentDate);
+    document.getElementById('profileEnrollmentDate').textContent = enrollmentDate.toLocaleDateString('es-ES');
+    
+    document.getElementById('profileStatus').textContent = profile.status === 'Active' ? 'Activo' : profile.status;
+    
+    // Limpiar y recrear sección de monedas
+    displayCurrencies(profile.points.currencies);
+}
+
+// ============================================
+// MOSTRAR MONEDAS DINÁMICAMENTE
+// ============================================
+function displayCurrencies(currencies) {
+    const profileStats = document.querySelector('.profile-stats');
+    
+    // Eliminar tarjetas de moneda anteriores (mantener Total y Miembro desde)
+    const existingCurrencyCards = profileStats.querySelectorAll('.currency-card');
+    existingCurrencyCards.forEach(card => card.remove());
+    
+    // Eliminar stat-cards predeterminados (Puntos Disponibles y Puntos de Nivel)
+    const availableCard = document.getElementById('availablePoints')?.closest('.stat-card');
+    const tierCard = document.getElementById('tierPoints')?.closest('.stat-card');
+    if (availableCard) availableCard.remove();
+    if (tierCard) tierCard.remove();
+    
+    // Crear tarjeta para cada moneda
+    currencies.forEach((currency, index) => {
+        const card = document.createElement('div');
+        card.className = 'stat-card currency-card';
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.innerHTML = `
+            <div class="stat-value">${currency.balance.toLocaleString()}</div>
+            <div class="stat-label">${currency.name}</div>
+        `;
+        
+        // Insertar antes de la tarjeta "Miembro desde"
+        const memberSinceCard = document.getElementById('memberSince').closest('.stat-card');
+        profileStats.insertBefore(card, memberSinceCard);
+    });
+}
 
         // ============================================
         // COMPRA DE PRODUCTOS
@@ -1039,31 +1115,6 @@
             profileMessage.textContent = text;
             profileMessage.className = `message ${type} show`;
         }
-
-        // ============================================
-        // FUNCIONES SALESFORCE API (PLACEHOLDER)
-        // ============================================
-        async function getAccessToken() {
-            // Implementar autenticación OAuth
-
-            const workerUrl = "https://young-snowflake-1f82.williamriveragr.workers.dev";
-
-            const data = {
-                FirstName: "Test",
-                LastName: "Test",
-                Company: "Test"
-            };
-
-            const res = await fetch(workerUrl, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data)
-            });
-
-            console.log(await res.json());
-
-            return 'mock_token';
-        }
         
         async function searchMember(searchTerm) {
             // Implementar búsqueda de miembro
@@ -1071,7 +1122,7 @@
         }
 
         async function createMember(formData) {
-    const response = await fetch('https://young-snowflake-1f82.williamriveragr.workers.dev', {
+        const response = await fetch('https://young-snowflake-1f82.williamriveragr.workers.dev', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
