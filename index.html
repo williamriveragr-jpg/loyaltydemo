@@ -909,10 +909,9 @@
                 Birthdate: document.getElementById('birthDate').value,
                 MembershipNumber: generateMembershipNumber(),
                 EnrollmentChannel: document.getElementById('enrollmentChannel').value,
-                EnrollmentDate: new Date().toISOString().split('T')[0],
-                ProgramId: SALESFORCE_CONFIG.loyaltyProgramId
+                EnrollmentDate: new Date().toISOString().split('T')[0]
             };
-
+            const accessToken = await getAccessToken();
             // Mostrar número generado
             document.getElementById('membershipNumber').value = formData.MembershipNumber;
 
