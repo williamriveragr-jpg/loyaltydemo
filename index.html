@@ -853,7 +853,6 @@
     </div>
 
     <script>
-
         // ============================================
         // NAVEGACIÓN
         // ============================================
@@ -925,7 +924,7 @@
                 // Simular llamada API (reemplazar con llamada real a Salesforce)
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 
-                const accessToken = await getAccessToken();
+                // const result = await createLoyaltyProgramMember(formData);
                 
                 showMessage('¡Registro exitoso! Número de membresía: ' + formData.MembershipNumber, 'success');
                 
@@ -1046,65 +1045,35 @@
         // FUNCIONES SALESFORCE API (PLACEHOLDER)
         // ============================================
         async function getAccessToken() {
-            const workerUrl = 'young-snowflake-1f82.williamriveragr.workers.dev';
-            const params = {
-              FirstName: "TEST",
-              LastName: "TEST",
-              Company: "TEST.INC"
+            // Implementar autenticación OAuth
+
+            const workerUrl = "young-snowflake-1f82.williamriveragr.workers.dev";
+
+            const data = {
+                FirstName: "Test",
+                LastName: "Test",
+                Company: "Test"
             };
-            const response = await fetch(workerUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: params
+
+            const res = await fetch(workerUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
             });
 
-            if (!response.ok) {
-                throw new Error('Error de autenticación con Salesforce');
-            }
+            console.log(await res.json());
 
-            const data = await response.json();
-            return data.access_token;
+            return 'mock_token';
         }
 
-        /**
-         * Crear LoyaltyProgramMember en Salesforce
-         */
         async function createLoyaltyProgramMember(memberData) {
-            // Obtener token de acceso
-            
-
-            // Preparar payload
-            const payload = {
-                MembershipNumber: memberData.MembershipNumber,
-                ContactId: await getOrCreateContact(accessToken, memberData),
-                ProgramId: memberData.ProgramId,
-                EnrollmentChannel: memberData.EnrollmentChannel,
-                EnrollmentDate: memberData.EnrollmentDate,
-                MemberStatus: 'Active',
-                MemberType: 'Individual'
-            };
-
-            // Crear registro
-
+            // Implementar creación de miembro
+            return { success: true, id: 'mock_id' };
         }
-
-        /**
-         * Obtener o crear Contact
-         */
-        async function getOrCreateContact(accessToken, memberData) {
-            // Buscar contact existente por email
-
-            // Crear nuevo contact
-            const contactPayload = {
-                FirstName: memberData.FirstName,
-                LastName: memberData.LastName,
-                Email: memberData.Email,
-                MobilePhone: memberData.MobilePhone,
-                Birthdate: memberData.Birthdate || null
-            };
-
+        
+        async function searchMember(searchTerm) {
+            // Implementar búsqueda de miembro
+            return { success: true, data: {} };
         }
     </script>
 </body>
