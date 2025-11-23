@@ -914,7 +914,7 @@
             
             // Mostrar número generado
             document.getElementById('membershipNumber').value = formData.MembershipNumber;
-
+            const result = await createMember(formData);
             submitBtn.disabled = true;
             loading.classList.add('show');
             messageDiv.classList.remove('show');
@@ -923,7 +923,7 @@
                 // Simular llamada API (reemplazar con llamada real a Salesforce)
                 await new Promise(resolve => setTimeout(resolve, 2000));
                 
-                const result = await createLoyaltyProgramMember(formData);
+
                 
                 showMessage('¡Registro exitoso! Número de membresía: ' + formData.MembershipNumber, 'success');
                 
@@ -1063,11 +1063,6 @@
             console.log(await res.json());
 
             return 'mock_token';
-        }
-
-        async function createLoyaltyProgramMember(memberData) {
-            // Implementar creación de miembro
-            return { success: true, id: 'mock_id' };
         }
         
         async function searchMember(searchTerm) {
