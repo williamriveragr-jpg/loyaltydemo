@@ -976,6 +976,16 @@
         const WORKER_URL = 'https://young-snowflake-1f82.williamriveragr.workers.dev';
         let currentMember = null;
         let isSpinning = false;
+            // Referencias para la ruleta
+    const wheelLoginDiv = document.getElementById('wheelLogin');
+    const wheelGameDiv = document.getElementById('wheelGame');
+    const wheelMembershipInput = document.getElementById('wheelMembershipNumber');
+    const loginLoading = document.getElementById('wheelLoginLoading');
+    const loginMessage = document.getElementById('wheelLoginMessage');
+    const spinButton = document.getElementById('spinButton');
+    const wheelElement = document.getElementById('wheel');
+    const resultDiv = document.getElementById('wheelResult');
+    const wheelPrizeText = document.getElementById('wheelPrize');
         // Premios de la ruleta
         const wheelPrizes = [{
                 name: '100 Puntos',
