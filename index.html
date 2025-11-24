@@ -1132,6 +1132,17 @@
         const WORKER_URL = 'https://young-snowflake-1f82.williamriveragr.workers.dev';
         let currentMember = null;
         let isSpinning = false;
+        // Premios de la ruleta
+        const wheelPrizes = [
+            { name: '100 Puntos', value: 100, color: '#FF6B6B' },
+            { name: '500 Puntos', value: 500, color: '#4ECDC4' },
+            { name: 'Descuento 10%', value: 0, color: '#45B7D1' },
+            { name: 'Noche Gratis', value: 0, color: '#FFA07A' },
+            { name: 'Upgrade Hab.', value: 0, color: '#98D8C8' },
+            { name: 'Cena x2', value: 0, color: '#F7B267' },
+            { name: 'Spa Gratis', value: 0, color: '#C06C84' },
+            { name: 'Mejor Suerte', value: 0, color: '#6C5B7B' }
+        ];
         // ============================================
         // NAVEGACIÓN
         // ============================================
@@ -1388,6 +1399,26 @@ function displayCurrencies(currencies) {
         })
     });
 
+        // ============================================
+        // SPIN THE WHEEL
+        // ============================================
+        function initWheel() {
+            const wheel = document.getElementById('wheel');
+            const segmentAngle = 360 / wheelPrizes.length;
+            
+            wheelPrizes.forEach((prize, index) => {
+                const segment = document.createElement('div');
+                segment.className = 'wheel-segment';
+                segment.style.transform = `rotate(${index * segmentAngle}deg)`;
+                segment.style.background = prize.color;
+                
+                const label = document.createElement('span');
+                label.textContent = prize.name;
+                segment.appendChild(label);
+                
+                wheel.appendChild(segment);
+            });
+        }
 // Cargar premios del juego al iniciar la ruleta
 async function loadGamePrizes(gameName) {
     try {
@@ -1401,9 +1432,11 @@ async function loadGamePrizes(gameName) {
         });
 
         const result = await response.json();
-        const wheelPrizes = [];
+        
         if (result.success) {
-            // Actualizar array de premios con datos reales           
+            // Actualizar array de premios con datos reales
+            wheelPrizes.length = 0; // Limpiar array
+            
             result.data.prizes.forEach(prize => {
                 wheelPrizes.push({
                     id: prize.id,
@@ -1442,7 +1475,7 @@ async function startWheel() {
     loginLoading.classList.add('show');
     
     // Cargar premios del juego
-    const prizesLoaded = await loadGamePrizes('Spin The Wheel');
+    const prizesLoaded = await loadGamePrizes('Super Spin Rewards');
     
     if (!prizesLoaded) {
         showWheelLoginMessage('Error al cargar los premios del juego', 'error');
@@ -1466,38 +1499,13 @@ async function startWheel() {
         currentMember = result.data;
         document.getElementById('wheelLogin').style.display = 'none';
         document.getElementById('wheelGame').classList.add('active');
-        initWheel(prizesLoaded); // Crear ruleta con premios reales
+        initWheel(); // Crear ruleta con premios reales
     } else {
         showWheelLoginMessage('Miembro no encontrado.', 'error');
     }
     
     loginLoading.classList.remove('show');
 }
-
-    const result = await response.json();
-    console.log(result);
-}
-
-        // ============================================
-        // SPIN THE WHEEL
-        // ============================================
-        function initWheel(wheelPrizes) {
-            const wheel = document.getElementById('wheel');
-            const segmentAngle = 360 / wheelPrizes.length;
-            
-            wheelPrizes.forEach((prize, index) => {
-                const segment = document.createElement('div');
-                segment.className = 'wheel-segment';
-                segment.style.transform = `rotate(${index * segmentAngle}deg)`;
-                segment.style.background = prize.color;
-                
-                const label = document.createElement('span');
-                label.textContent = prize.name;
-                segment.appendChild(label);
-                
-                wheel.appendChild(segment);
-            });
-        }
 
         async function spinWheel() {
             if (isSpinning) return;
