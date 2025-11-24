@@ -1437,7 +1437,7 @@ async function buyProduct(productName, points) {
         return;
     }
     
-    if (!confirm(`¿Deseas canjear ${points.toLocaleString()} puntos por ${productName}?`)) {
+    if (!confirm(`¿Deseas canjear ${(points * 100).toLocaleString()} puntos por ${productName}?`)) {
         return;
     }
     
