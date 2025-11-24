@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Palladium Rewards - Programa de Fidelización</title>
+    <title>Chiringuitos Will - El lord de chiringuitos</title>
     <style>
         * {
             margin: 0;
@@ -749,7 +749,7 @@
          ============================================ -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="#" class="nav-logo" onclick="showSection('home')">🏆 Palladium Rewards</a>
+            <a href="#" class="nav-logo" onclick="showSection('home')">🏆 Chiringuitos Will</a>
             
             <div class="nav-toggle" id="navToggle">
                 <span></span>
@@ -785,7 +785,7 @@
         <!-- SECCIÓN HOME -->
         <section id="home" class="section active">
             <div class="hero">
-                <h1>Bienvenido a Palladium Rewards</h1>
+                <h1>Bienvenido a Will Rewards</h1>
                 <p>Tu programa de fidelización con beneficios exclusivos</p>
                 <button class="btn" onclick="showSection('alta')">Únete Ahora</button>
                 <button class="btn btn-secondary" onclick="showSection('perfil')">Consultar Puntos</button>
@@ -807,7 +807,7 @@
                 <div class="benefit-card">
                     <div class="benefit-icon">🏨</div>
                     <h3>Descuentos en Hoteles</h3>
-                    <p>Disfruta de tarifas especiales en nuestra red de hoteles Palladium</p>
+                    <p>Disfruta de tarifas especiales en nuestra red de chiringuitos</p>
                 </div>
                 
                 <div class="benefit-card">
@@ -892,15 +892,15 @@
                 <div class="product-card">
                     <div class="product-image">🏨</div>
                     <div class="product-info">
-                        <div class="product-title">Noche Gratis en Hotel</div>
+                        <div class="product-title">Dia playa gratis</div>
                         <div class="product-description">
-                            Una noche de alojamiento en cualquiera de nuestros hoteles Palladium
+                            Un dia de playa gratis en nuestros chiringuitos
                         </div>
                         <div class="product-price">
                             <span class="price">€150</span>
                             <span class="points">15,000 pts</span>
                         </div>
-                        <button class="btn" onclick="buyProduct('Noche Gratis', 15000)">Canjear</button>
+                        <button class="btn" onclick="buyProduct('Dia playa gratis', 15000)">Canjear</button>
                     </div>
                 </div>
                 
@@ -994,7 +994,7 @@
                             <li>100 Puntos Extra</li>
                             <li>500 Puntos Bonus</li>
                             <li>Descuento 10%</li>
-                            <li>Noche Gratis</li>
+                            <li>Dia playa gratis</li>
                             <li>Upgrade de Habitación</li>
                             <li>Cena para 2</li>
                             <li>Spa Gratis</li>
@@ -1132,17 +1132,6 @@
         const WORKER_URL = 'https://young-snowflake-1f82.williamriveragr.workers.dev';
         let currentMember = null;
         let isSpinning = false;
-        // Premios de la ruleta
-        const wheelPrizes = [
-            { name: '100 Puntos', value: 100, color: '#FF6B6B' },
-            { name: '500 Puntos', value: 500, color: '#4ECDC4' },
-            { name: 'Descuento 10%', value: 0, color: '#45B7D1' },
-            { name: 'Noche Gratis', value: 0, color: '#FFA07A' },
-            { name: 'Upgrade Hab.', value: 0, color: '#98D8C8' },
-            { name: 'Cena x2', value: 0, color: '#F7B267' },
-            { name: 'Spa Gratis', value: 0, color: '#C06C84' },
-            { name: 'Mejor Suerte', value: 0, color: '#6C5B7B' }
-        ];
         // ============================================
         // NAVEGACIÓN
         // ============================================
