@@ -676,7 +676,7 @@
          <!-- SECCIÓN HOME -->
          <section id="home" class="section active">
             <div class="hero">
-               <h1>Bienvenido a Will Rewards</h1>
+               <h1>Bienvenido a Demo Loyalty</h1>
                <p>Tu programa de fidelización con beneficios exclusivos</p>
                <button class="btn" onclick="showSection('alta')">Únete Ahora</button>
                <button class="btn btn-secondary" onclick="showSection('perfil')">Consultar Puntos</button>
@@ -1474,7 +1474,7 @@ async function buyProduct(productName, points) {
         // Crear transacción de redención (redención = puntos negativos)
         const transactionResult = await createRedemptionTransaction(
             memberResult.data.memberId,
-            -points, // Negativo porque es una redención
+            points, 
             productName
         );
         
