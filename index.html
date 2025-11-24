@@ -1512,48 +1512,6 @@ async function startWheel() {
             });
         }
 
-        async function startWheel() {
-            const membershipNumber = document.getElementById('wheelMembershipNumber').value.trim();
-            const loginLoading = document.getElementById('wheelLoginLoading');
-            const loginMessage = document.getElementById('wheelLoginMessage');
-            
-            if (!membershipNumber) {
-                showWheelLoginMessage('Por favor, ingresa tu número de membresía', 'error');
-                return;
-            }
-            
-            loginLoading.classList.add('show');
-            loginMessage.classList.remove('show');
-            
-            try {
-                const response = await fetch(WORKER_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        operation: "getMember",
-                        data: { membershipNumber }
-                    })
-                });
-
-                const result = await response.json();
-                
-                if (result.success) {
-                    currentMember = result.data;
-                    document.getElementById('wheelLogin').style.display = 'none';
-                    document.getElementById('wheelGame').classList.add('active');
-                    initWheel();
-                } else {
-                    showWheelLoginMessage('Miembro no encontrado. Verifica tu número.', 'error');
-                }
-                
-            } catch (error) {
-                console.error('Error:', error);
-                showWheelLoginMessage('Error al verificar membresía.', 'error');
-            } finally {
-                loginLoading.classList.remove('show');
-            }
-        }
-
         async function spinWheel() {
             if (isSpinning) return;
             
