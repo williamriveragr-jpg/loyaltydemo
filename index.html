@@ -1287,38 +1287,146 @@
         }
     }
 
-    async function spinWheel() {
-        if (isSpinning || wheelPrizes.length === 0) return;
+async function spinWheel() {
+    if (isSpinning || wheelPrizes.length === 0) return;
+    
+    isSpinning = true;
+    spinButton.disabled = true;
+    resultDiv.classList.remove('show');
+    
+    // Seleccionar premio basado en probabilidades
+    const selectedPrize = selectPrizeByProbability();
+    const prizeIndex = wheelPrizes.findIndex(p => p.id === selectedPrize.id);
+    
+    const segmentAngle = 360 / wheelPrizes.length;
+    const targetAngle = (360 - (prizeIndex * segmentAngle)) + (segmentAngle / 2);
+    const totalRotation = 360 * 5 + targetAngle; // 5 vueltas completas + ángulo objetivo
+    
+    wheelElement.style.transform = `rotate(${totalRotation}deg)`;
+    
+    setTimeout(async () => {
+        wheelPrizeText.innerHTML = `Has ganado: <strong>${selectedPrize.name}</strong>`;
+        resultDiv.classList.add('show');
         
-        isSpinning = true;
-        spinButton.disabled = true;
-        resultDiv.classList.remove('show');
-        
-        const randomIndex = Math.floor(Math.random() * wheelPrizes.length);
-        const prize = wheelPrizes[randomIndex];
-        
-        const segmentAngle = 360 / wheelPrizes.length;
-        const targetAngle = (360 - (randomIndex * segmentAngle)) + (segmentAngle / 2);
-        const totalRotation = 360 * 5 + targetAngle;
-        
-        wheelElement.style.transform = `rotate(${totalRotation}deg)`;
-        
-        setTimeout(async () => {
-            wheelPrizeText.innerHTML = `Has ganado: <strong>${prize.name}</strong>`;
-            resultDiv.classList.add('show');
-            
-            if (prize.value > 0) {
-                try {
-                    await createTransaction(currentMember.memberId, prize.value, 'Spin the Wheel');
-                } catch (error) {
-                    console.error('Error al acreditar puntos:', error);
+        // Si ganó puntos, acreditar
+        if (selectedPrize.rewardType === 'LoyaltyPoints' && selectedPrize.value > 0) {
+            try {
+                const transactionResult = await createTransaction(
+                    currentMember.memberId, 
+                    selectedPrize.value, 
+                    selectedPrize.name,
+                    selectedPrize.rewardDefinitionId
+                );
+                
+                if (transactionResult.success) {
+                    console.log('Puntos acreditados exitosamente');
+                } else {
+                    console.error('Error al acreditar puntos:', transactionResult.error);
                 }
+            } catch (error) {
+                console.error('Error al acreditar puntos:', error);
             }
-            
-            isSpinning = false;
-            spinButton.disabled = false;
-        }, 4000);
+        }
+        
+        // Si ganó un voucher, crear voucher
+        if (selectedPrize.rewardType === 'Voucher' && selectedPrize.rewardDefinitionId) {
+            try {
+                const voucherResult = await createVoucher(
+                    currentMember.memberId,
+                    selectedPrize.rewardDefinitionId,
+                    selectedPrize.name
+                );
+                
+                if (voucherResult.success) {
+                    wheelPrizeText.innerHTML += `<br><small>Código: ${voucherResult.data.voucherCode}</small>`;
+                    console.log('Voucher creado exitosamente');
+                } else {
+                    console.error('Error al crear voucher:', voucherResult.error);
+                }
+            } catch (error) {
+                console.error('Error al crear voucher:', error);
+            }
+        }
+        
+        isSpinning = false;
+        spinButton.disabled = false;
+    }, 4000);
+}
+
+// ============================================
+// FUNCIÓN: SELECCIONAR PREMIO POR PROBABILIDAD
+// ============================================
+function selectPrizeByProbability() {
+    // Filtrar solo premios disponibles
+    const availablePrizes = wheelPrizes.filter(prize => prize.isAvailable);
+    
+    if (availablePrizes.length === 0) {
+        // Si no hay premios disponibles, devolver "Mejor Suerte"
+        return wheelPrizes.find(p => p.rewardType === 'NoReward') || wheelPrizes[0];
     }
+    
+    // Calcular probabilidad total
+    const totalProbability = availablePrizes.reduce((sum, prize) => sum + prize.winProbability, 0);
+    
+    // Generar número aleatorio entre 0 y la probabilidad total
+    let random = Math.random() * totalProbability;
+    
+    // Seleccionar premio según probabilidad acumulada
+    let cumulativeProbability = 0;
+    
+    for (const prize of availablePrizes) {
+        cumulativeProbability += prize.winProbability;
+        
+        if (random <= cumulativeProbability) {
+            return prize;
+        }
+    }
+    
+    // Fallback: devolver el último premio disponible
+    return availablePrizes[availablePrizes.length - 1];
+}
+
+// ============================================
+// API CALL: CREAR TRANSACCIÓN (ACTUALIZADA)
+// ============================================
+async function createTransaction(memberId, amount, productName, rewardDefinitionId) {
+    const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            operation: "createTransaction",
+            data: {
+                memberId: memberId,
+                amount: amount,
+                transactionType: "Accrual",
+                journalType: "Accrual",
+                journalSubType: "Gamification",
+                productName: productName,
+                rewardDefinitionId: rewardDefinitionId // ID del Reward Definition
+            }
+        })
+    });
+    return await response.json();
+}
+
+// ============================================
+// API CALL: CREAR VOUCHER (NUEVO)
+// ============================================
+async function createVoucher(memberId, voucherDefinitionId, voucherName) {
+    const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            operation: "createVoucher",
+            data: {
+                memberId: memberId,
+                voucherDefinitionId: voucherDefinitionId,
+                voucherName: voucherName
+            }
+        })
+    });
+    return await response.json();
+}
 
     function resetWheel() {
         wheelGameDiv.classList.remove('active');
@@ -1331,36 +1439,119 @@
         wheelPrizes = [];
     }
 
-    // ============================================
-    // COMPRA DE PRODUCTOS
-    // ============================================
-    function buyProduct(productName, points) {
-        if (confirm(`¿Deseas canjear ${points.toLocaleString()} puntos por ${productName}?`)) {
-            alert('¡Producto canjeado exitosamente!');
-        }
+// ============================================
+// COMPRA DE PRODUCTOS
+// ============================================
+async function buyProduct(productName, points) {
+    // Verificar si el usuario está logueado (tiene membresía)
+    const membershipNumber = prompt('Ingresa tu número de membresía para canjear:');
+    
+    if (!membershipNumber) {
+        alert('Debes ingresar tu número de membresía');
+        return;
     }
-
-    // ============================================
-    // API CALLS
-    // ============================================
-    async function createTransaction(memberId, amount, productName) {
-        const response = await fetch(WORKER_URL, {
+    
+    if (!confirm(`¿Deseas canjear ${points.toLocaleString()} puntos por ${productName}?`)) {
+        return;
+    }
+    
+    // Mostrar loading
+    const loadingMessage = document.createElement('div');
+    loadingMessage.className = 'loading show';
+    loadingMessage.innerHTML = '<div class="spinner"></div><p>Procesando canje...</p>';
+    document.querySelector('#comprar').appendChild(loadingMessage);
+    
+    try {
+        // Obtener datos del miembro
+        const memberResponse = await fetch(WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                operation: "createTransaction",
-                data: {
-                    memberId: memberId,
-                    amount: amount,
-                    transactionType: "Accrual",
-                    journalType: "Accrual",
-                    journalSubType: "Gamification",
-                    productName: productName
-                }
+                operation: "getMember",
+                data: { membershipNumber: membershipNumber }
             })
         });
-        return await response.json();
+        
+        const memberResult = await memberResponse.json();
+        
+        if (!memberResult.success) {
+            alert('Miembro no encontrado. Verifica tu número de membresía.');
+            return;
+        }
+        
+        // Verificar si tiene puntos suficientes
+        if (memberResult.data.points.total < points) {
+            alert(`No tienes suficientes puntos. Necesitas ${points.toLocaleString()} puntos pero solo tienes ${memberResult.data.points.total.toLocaleString()}.`);
+            return;
+        }
+        
+        // Crear transacción de redención (redención = puntos negativos)
+        const transactionResult = await createRedemptionTransaction(
+            memberResult.data.memberId,
+            -points, // Negativo porque es una redención
+            productName
+        );
+        
+        if (transactionResult.success) {
+            alert(`¡Producto canjeado exitosamente!\n\nProducto: ${productName}\nPuntos utilizados: ${points.toLocaleString()}\nTransacción: ${transactionResult.data.transactionNumber}`);
+            
+            // Opcional: redirigir a perfil para ver puntos actualizados
+            showSection('perfil');
+        } else {
+            alert('Error al canjear producto: ' + transactionResult.error);
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al procesar el canje. Intenta nuevamente.');
+    } finally {
+        // Remover loading
+        loadingMessage.remove();
     }
+}
+
+// ============================================
+// API CALL: CREAR TRANSACCIÓN DE REDENCIÓN
+// ============================================
+async function createRedemptionTransaction(memberId, amount, productName) {
+    const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            operation: "createTransaction",
+            data: {
+                memberId: memberId,
+                amount: amount, // Negativo para redención
+                journalSubType: "Product", // Tipo de redención
+                productName: productName,
+                activityDate: new Date().toISOString().split('T')[0]
+            }
+        })
+    });
+    return await response.json();
+}
+
+// ============================================
+// API CALL: CREAR TRANSACCIÓN DE ACUMULACIÓN (Ya existente, actualizada)
+// ============================================
+async function createAccrualTransaction(memberId, amount, productName, rewardDefinitionId) {
+    const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            operation: "createTransaction",
+            data: {
+                memberId: memberId,
+                amount: amount,
+                journalSubType: "Gamification", // Tipo de acumulación
+                productName: productName,
+                rewardDefinitionId: rewardDefinitionId,
+                activityDate: new Date().toISOString().split('T')[0]
+            }
+        })
+    });
+    return await response.json();
+}
 
     // ============================================
     // FUNCIONES AUXILIARES
