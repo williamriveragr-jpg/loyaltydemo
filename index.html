@@ -1401,11 +1401,9 @@ async function loadGamePrizes(gameName) {
         });
 
         const result = await response.json();
-        
+        const wheelPrizes = [];
         if (result.success) {
-            // Actualizar array de premios con datos reales
-            wheelPrizes.length = 0; // Limpiar array
-            
+            // Actualizar array de premios con datos reales           
             result.data.prizes.forEach(prize => {
                 wheelPrizes.push({
                     id: prize.id,
