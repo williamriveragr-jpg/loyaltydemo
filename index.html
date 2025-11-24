@@ -1455,7 +1455,7 @@ async function startWheel() {
     loginLoading.classList.add('show');
     
     // Cargar premios del juego
-    const prizesLoaded = await loadGamePrizes('Palladium Wheel');
+    const prizesLoaded = await loadGamePrizes('Spin The Wheel');
     
     if (!prizesLoaded) {
         showWheelLoginMessage('Error al cargar los premios del juego', 'error');
