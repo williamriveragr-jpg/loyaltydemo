@@ -666,6 +666,9 @@
                <li class="nav-item">
                   <a href="#" class="nav-link" data-section="perfil" onclick="showSection('perfil')">Consultar Perfil</a>
                </li>
+               <li class="nav-item">
+                <a href="#" class="nav-link" data-section="voucher" onclick="showSection('voucher')">Redimir Voucher</a>
+                </li>
             </ul>
          </div>
       </nav>
@@ -956,6 +959,112 @@
                </div>
             </div>
          </section>
+         <!-- SECCIÓN REDIMIR VOUCHER -->
+<section id="voucher" class="section">
+    <h1>🎫 Redimir Voucher</h1>
+    <p class="subtitle">Ingresa tu código de voucher para obtener descuentos y beneficios</p>
+    
+    <!-- Formulario de Redención -->
+    <div style="max-width: 600px; margin: 0 auto;">
+        <div class="form-group">
+            <label for="voucherCode">Código de Voucher <span class="required">*</span></label>
+            <input type="text" id="voucherCode" placeholder="Ej: VCH123456789" style="text-transform: uppercase;">
+        </div>
+        
+        <div class="form-group">
+            <label for="voucherMembershipNumber">Número de Membresía <span class="required">*</span></label>
+            <input type="text" id="voucherMembershipNumber" placeholder="Ingresa tu número de membresía">
+        </div>
+        
+        <button class="btn" onclick="redeemVoucher()">🎁 Redimir Voucher</button>
+        
+        <div class="loading" id="voucherLoading">
+            <div class="spinner"></div>
+            <p>Procesando redención...</p>
+        </div>
+        
+        <div class="message" id="voucherMessage"></div>
+    </div>
+    
+    <!-- Resultado de Redención -->
+    <div id="voucherResult" style="display: none; margin-top: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
+        <div style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); padding: 30px; border-radius: 10px; text-align: center;">
+            <div style="font-size: 64px; margin-bottom: 20px;">🎉</div>
+            <h2 style="color: #155724; margin-bottom: 15px;">¡Voucher Redimido Exitosamente!</h2>
+            
+            <div style="background: white; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left;">
+                    <div>
+                        <div style="font-size: 12px; color: #666; text-transform: uppercase;">Código</div>
+                        <div style="font-size: 18px; font-weight: bold; color: #333;" id="redeemedCode">VCH123456</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: #666; text-transform: uppercase;">Tipo</div>
+                        <div style="font-size: 18px; font-weight: bold; color: #333;" id="redeemedType">Descuento</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: #666; text-transform: uppercase;">Valor</div>
+                        <div style="font-size: 18px; font-weight: bold; color: #667eea;" id="redeemedValue">10% OFF</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 12px; color: #666; text-transform: uppercase;">Válido hasta</div>
+                        <div style="font-size: 18px; font-weight: bold; color: #333;" id="redeemedExpiry">31/12/2025</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin-top: 20px;">
+                <p style="color: #856404; margin: 0; font-size: 14px;">
+                    <strong>📌 Importante:</strong> Este voucher ha sido aplicado a tu cuenta. 
+                    Puedes usarlo en tu próxima compra o reserva.
+                </p>
+            </div>
+            
+            <button class="btn" style="margin-top: 20px;" onclick="resetVoucherForm()">
+                Redimir Otro Voucher
+            </button>
+        </div>
+    </div>
+    
+    <!-- Información de Vouchers -->
+    <div style="margin-top: 50px;">
+        <h3 style="color: #333; margin-bottom: 20px;">ℹ️ ¿Cómo funcionan los vouchers?</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #667eea;">
+                <div style="font-size: 32px; margin-bottom: 10px;">🎁</div>
+                <h4 style="color: #333; margin-bottom: 10px;">Obtén Vouchers</h4>
+                <p style="color: #666; font-size: 14px; line-height: 1.6;">
+                    Gana vouchers jugando en la ruleta, participando en promociones o como recompensa por tu fidelidad.
+                </p>
+            </div>
+            
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #764ba2;">
+                <div style="font-size: 32px; margin-bottom: 10px;">🔍</div>
+                <h4 style="color: #333; margin-bottom: 10px;">Verifica el Código</h4>
+                <p style="color: #666; font-size: 14px; line-height: 1.6;">
+                    Ingresa tu código de voucher y número de membresía para verificar su validez y beneficios.
+                </p>
+            </div>
+            
+            <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #f093fb;">
+                <div style="font-size: 32px; margin-bottom: 10px;">✅</div>
+                <h4 style="color: #333; margin-bottom: 10px;">Redime y Disfruta</h4>
+                <p style="color: #666; font-size: 14px; line-height: 1.6;">
+                    Una vez redimido, el descuento o beneficio se aplicará automáticamente en tu próxima transacción.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Mis Vouchers Activos -->
+    <div id="activeVouchers" style="margin-top: 50px; display: none;">
+        <h3 style="color: #333; margin-bottom: 20px;">🎫 Mis Vouchers Activos</h3>
+        <div id="vouchersList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
+            <!-- Vouchers se cargarán dinámicamente aquí -->
+        </div>
+    </div>
+</section>
       </div>
       <script>
     // ============================================
@@ -1537,6 +1646,151 @@ async function createAccrualTransaction(memberId, amount, productName, rewardDef
         })
     });
     return await response.json();
+}
+// ============================================
+// REDENCIÓN DE VOUCHERS
+// ============================================
+async function redeemVoucher() {
+    const voucherCode = document.getElementById('voucherCode').value.trim().toUpperCase();
+    const membershipNumber = document.getElementById('voucherMembershipNumber').value.trim();
+    const voucherLoading = document.getElementById('voucherLoading');
+    const voucherMessage = document.getElementById('voucherMessage');
+    const voucherResult = document.getElementById('voucherResult');
+    
+    // Validaciones
+    if (!voucherCode) {
+        showVoucherMessage('Por favor, ingresa el código de voucher', 'error');
+        return;
+    }
+    
+    if (!membershipNumber) {
+        showVoucherMessage('Por favor, ingresa tu número de membresía', 'error');
+        return;
+    }
+    
+    voucherLoading.classList.add('show');
+    voucherMessage.classList.remove('show');
+    voucherResult.style.display = 'none';
+    
+    try {
+        // Verificar que el miembro existe
+        const memberResponse = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                operation: "getMember",
+                data: { membershipNumber }
+            })
+        });
+        
+        const memberResult = await memberResponse.json();
+        
+        if (!memberResult.success) {
+            showVoucherMessage('Miembro no encontrado. Verifica tu número de membresía.', 'error');
+            return;
+        }
+        
+        // Redimir voucher
+        const redeemResponse = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                operation: "redeemVoucher",
+                data: {
+                    voucherCode: voucherCode,
+                    memberId: memberResult.data.memberId
+                }
+            })
+        });
+        
+        const redeemResult = await redeemResponse.json();
+        
+        if (redeemResult.success) {
+            // Mostrar resultado exitoso
+            displayVoucherResult(redeemResult.data);
+            document.getElementById('voucherCode').value = '';
+            document.getElementById('voucherMembershipNumber').value = '';
+        } else {
+            showVoucherMessage(redeemResult.error || 'Error al redimir voucher', 'error');
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showVoucherMessage('Error al procesar la redención. Intenta nuevamente.', 'error');
+    } finally {
+        voucherLoading.classList.remove('show');
+    }
+}
+
+function displayVoucherResult(voucherData) {
+    document.getElementById('redeemedCode').textContent = voucherData.voucherCode;
+    document.getElementById('redeemedType').textContent = voucherData.type || 'Descuento';
+    document.getElementById('redeemedValue').textContent = voucherData.value || '10% OFF';
+    
+    if (voucherData.expirationDate) {
+        const expiryDate = new Date(voucherData.expirationDate);
+        document.getElementById('redeemedExpiry').textContent = expiryDate.toLocaleDateString('es-ES');
+    } else {
+        document.getElementById('redeemedExpiry').textContent = 'Sin límite';
+    }
+    
+    document.getElementById('voucherResult').style.display = 'block';
+    
+    // Scroll al resultado
+    document.getElementById('voucherResult').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function resetVoucherForm() {
+    document.getElementById('voucherCode').value = '';
+    document.getElementById('voucherMembershipNumber').value = '';
+    document.getElementById('voucherResult').style.display = 'none';
+    document.getElementById('voucherCode').focus();
+}
+
+async function loadActiveVouchers(membershipNumber) {
+    try {
+        const response = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                operation: "getActiveVouchers",
+                data: { membershipNumber }
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success && result.data.vouchers.length > 0) {
+            const vouchersList = document.getElementById('vouchersList');
+            vouchersList.innerHTML = '';
+            
+            result.data.vouchers.forEach(voucher => {
+                const voucherCard = document.createElement('div');
+                voucherCard.style.cssText = 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);';
+                voucherCard.innerHTML = `
+                    <div style="font-size: 14px; opacity: 0.8; margin-bottom: 10px;">${voucher.type}</div>
+                    <div style="font-size: 24px; font-weight: bold; margin-bottom: 15px;">${voucher.value}</div>
+                    <div style="background: rgba(255,255,255,0.2); padding: 10px; border-radius: 5px; font-family: monospace;">
+                        ${voucher.code}
+                    </div>
+                    <div style="font-size: 12px; opacity: 0.8; margin-top: 10px;">
+                        Válido hasta: ${new Date(voucher.expirationDate).toLocaleDateString('es-ES')}
+                    </div>
+                `;
+                vouchersList.appendChild(voucherCard);
+            });
+            
+            document.getElementById('activeVouchers').style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error cargando vouchers activos:', error);
+    }
+}
+
+function showVoucherMessage(text, type) {
+    const voucherMessage = document.getElementById('voucherMessage');
+    voucherMessage.textContent = text;
+    voucherMessage.className = `message ${type} show`;
 }
 
     // ============================================
