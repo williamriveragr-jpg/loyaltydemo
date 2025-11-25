@@ -593,7 +593,7 @@ async function redeemVoucher() {
                 operation: "redeemVoucher",
                 data: {
                     voucherCode: voucherCode,
-                    member: membershipNumber
+                    membershipNumber: membershipNumber
                 }
             })
         });
