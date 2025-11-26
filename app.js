@@ -481,8 +481,8 @@ async function spinWheel() {
 
         // Mostrar alert después de 1 segundo
         setTimeout(() => {
-            setTimeout(() => resetWheel(), 2000);
-        }, 1000);
+            setTimeout(() => resetWheel(), 5000);
+        }, 5000);
 
     } catch (error) {
         console.error('❌ Error:', error);
