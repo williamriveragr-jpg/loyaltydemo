@@ -422,7 +422,6 @@ async function spinWheel() {
 
         // PASO 7: Mostrar mensaje al usuario
         setTimeout(() => {
-            alert(prizeMessage + '\n\n' + detailMessage + '\n\n¡Revisa tu perfil para ver tus puntos actualizados!');
             
             // Resetear después de 2 segundos
             setTimeout(() => {
