@@ -5,7 +5,7 @@ const WORKER_URL = 'https://young-snowflake-1f82.williamriveragr.workers.dev';
 const PROGRAM_ID = '0lpd20000001aO1AAI';
 
 // Estado del juego
-let currentMember = null;
+let currentMember = {};
 let isSpinning = false;
 
 // Premios de la ruleta (se cargarán dinámicamente)
