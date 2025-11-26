@@ -310,36 +310,40 @@ function initWheel() {
         label.className = 'wheel-label';
         label.textContent = prize.name;
         
-        // Calcular posición del texto (más cerca del borde)
+        // Calcular el ángulo central del segmento
         const centerAngle = startAngle + (segmentAngle / 2);
-        const centerRad = (centerAngle - 90) * Math.PI / 180; // -90 para que 0° esté arriba
-        const radius = 65; // Más cerca del borde (era 50)
         
-        const x = 50 + radius * Math.cos(centerRad);
-        const y = 50 + radius * Math.sin(centerRad);
+        // Convertir a radianes (ajustando para que 0° esté arriba)
+        const angleRad = ((centerAngle - 90) * Math.PI) / 180;
+        
+        // Posicionar el texto cerca del borde (70% del radio desde el centro)
+        const distance = 70; // Porcentaje del radio
+        const x = 50 + distance * Math.cos(angleRad);
+        const y = 50 + distance * Math.sin(angleRad);
         
         label.style.position = 'absolute';
         label.style.left = `${x}%`;
         label.style.top = `${y}%`;
         
-        // IMPORTANTE: Rotar el texto 90° para ponerlo vertical + el ángulo del segmento
-        const textRotation = centerAngle + 90; // +90 para texto vertical
-        label.style.transform = `translate(-50%, -50%) rotate(${textRotation}deg)`;
+        // Rotar el texto para que esté vertical (perpendicular al radio)
+        // centerAngle apunta hacia afuera, +90 lo hace vertical
+        label.style.transform = `translate(-50%, -50%) rotate(${centerAngle + 90}deg)`;
         
         label.style.color = 'white';
-        label.style.fontSize = '11px';
+        label.style.fontSize = '13px';
         label.style.fontWeight = 'bold';
-        label.style.textShadow = '1px 1px 3px rgba(0,0,0,0.8)';
+        label.style.textShadow = '2px 2px 4px rgba(0,0,0,0.8)';
         label.style.whiteSpace = 'nowrap';
         label.style.pointerEvents = 'none';
         label.style.textAlign = 'center';
+        label.style.letterSpacing = '0.5px';
         
         label.setAttribute('data-prize-id', prize.id);
         label.setAttribute('data-prize-index', index);
         
         wheelElement.appendChild(label);
         
-        console.log(`Segmento ${index}: ${prize.name} (${startAngle}° - ${endAngle}°)`);
+        console.log(`Segmento ${index}: ${prize.name} (${startAngle}° - ${endAngle}°) - Texto en: ${x.toFixed(1)}%, ${y.toFixed(1)}%`);
     });
     
     conicGradient += gradientStops.join(', ') + ')';
