@@ -287,28 +287,48 @@ async function loadGamePrizes(gameName) {
 
 function initWheel() {
     wheelElement.innerHTML = '';
-    const segmentAngle = 360 / wheelPrizes.length;
+    const totalPrizes = wheelPrizes.length;
+    const segmentAngle = 360 / totalPrizes;
     
     console.log('🎨 Inicializando ruleta:');
-    console.log('Total de premios:', wheelPrizes.length);
+    console.log('Total de premios:', totalPrizes);
     console.log('Ángulo por segmento:', segmentAngle);
     
     wheelPrizes.forEach((prize, index) => {
         const segment = document.createElement('div');
         segment.className = 'wheel-segment';
-        segment.style.transformOrigin = "0% 100%";
-        // Rotar cada segmento según su posición
+        
+        // Calcular rotación del segmento
         const rotation = index * segmentAngle;
+        
+        // Calcular el clip-path para crear el segmento tipo "pizza"
+        // Usamos coordenadas polares convertidas a cartesianas
+        const startAngle = 0;
+        const endAngle = segmentAngle;
+        
+        // Convertir ángulos a radianes y luego a coordenadas cartesianas
+        const startRad = (startAngle - 90) * Math.PI / 180;
+        const endRad = (endAngle - 90) * Math.PI / 180;
+        
+        const x1 = 50 + 50 * Math.cos(startRad);
+        const y1 = 50 + 50 * Math.sin(startRad);
+        const x2 = 50 + 50 * Math.cos(endRad);
+        const y2 = 50 + 50 * Math.sin(endRad);
+        
+        // Aplicar estilos
         segment.style.transform = `rotate(${rotation}deg)`;
-        segment.style.background = prize.color;
+        segment.style.clipPath = `polygon(50% 50%, ${x1}% ${y1}%, ${x2}% ${y2}%)`;
+        segment.style.background = prize.color || '#667eea';
         
         // Agregar atributos data para debugging
         segment.setAttribute('data-prize-id', prize.id);
         segment.setAttribute('data-prize-index', index);
         segment.setAttribute('data-prize-name', prize.name);
         
+        // Crear etiqueta de texto
         const label = document.createElement('span');
         label.textContent = prize.name;
+        label.style.transform = `rotate(${segmentAngle / 2}deg)`; // Centrar texto
         segment.appendChild(label);
         
         wheelElement.appendChild(segment);
@@ -321,14 +341,25 @@ function initWheel() {
 
 async function spinWheel() {
     if (isSpinning) return;
+    
+    // Verificar si hay un premio pendiente
+    const pendingReward = participantGameRewards.find(pr => pr.status === 'YetToReward');
+    
+    if (!pendingReward) {
+        alert('No tienes oportunidades disponibles para jugar en este momento.');
+        return;
+    }
+    
     isSpinning = true;
-
-    resultBox.classList.add("hidden");
-    spinBtn.disabled = true;
-    spinBtn.innerHTML = "Girando...";
+    spinButton.disabled = true;
+    spinButton.textContent = 'Girando...';
+    resultDiv.classList.remove('show');
 
     try {
-        // PASO 1 → Registrar que el jugador va a recibir el premio pendiente
+        console.log('🎲 Llamando a Salesforce...');
+        console.log('GameParticipantRewardId:', pendingReward.gameParticipantRewardId);
+        
+        // PASO 1: Llamar a Salesforce para determinar el premio
         const playResponse = await fetch(WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -339,69 +370,116 @@ async function spinWheel() {
                 }
             })
         });
-
+        
         const playResult = await playResponse.json();
-
+        
         if (!playResult.success) {
             throw new Error(playResult.error || 'Error al jugar');
         }
-
+        
         console.log('🎯 Salesforce determinó el premio:', playResult.data);
-
-        // PASO 2 → Extraer datos del premio ganador
+        
+        // PASO 2: Buscar el índice del premio ganador
+        const gameRewardId = playResult.data.gameRewardId;
         const gameRewardData = playResult.data;
-        const gameRewardId = gameRewardData.gameRewardId;
-
-        // PASO 3 → Buscar el segmento correspondiente
-        const winningSegmentIndex = segments.findIndex(s => s.id === gameRewardId);
-
-        if (winningSegmentIndex === -1) {
-            throw new Error("No se encontró el segmento ganador.");
+        
+        const prizeIndex = wheelPrizes.findIndex(p => p.id === gameRewardId);
+        
+        if (prizeIndex === -1) {
+            console.error('❌ Premio no encontrado');
+            console.error('GameRewardId buscado:', gameRewardId);
+            console.error('IDs disponibles:', wheelPrizes.map(p => `${p.name}: ${p.id}`));
+            throw new Error(`Premio no encontrado: ${gameRewardId}`);
         }
 
-        const segmentAngle = 360 / segments.length;
+        console.log('\n=== PREMIO GANADOR ===');
+        console.log('Game Reward ID:', gameRewardId);
+        console.log('Nombre:', gameRewardData.rewardName);
+        console.log('Índice en ruleta:', prizeIndex);
+        console.log('Nombre en ruleta:', wheelPrizes[prizeIndex].name);
 
-        // Ángulo central del segmento ganador
-        const targetAngle = (winningSegmentIndex * segmentAngle) + (segmentAngle / 2);
+        // PASO 3: CALCULAR ROTACIÓN
+        const totalPrizes = wheelPrizes.length;
+        const segmentAngle = 360 / totalPrizes;
+        
+        // Calcular el ángulo del centro del segmento ganador
+        const segmentCenterAngle = (prizeIndex * segmentAngle) + (segmentAngle / 2);
+        
+        // Número de vueltas completas
+        const spins = 5;
+        
+        // Rotación final: 
+        // - Dar 5 vueltas completas (spins * 360)
+        // - Ajustar para que el centro del segmento quede arriba (360 - segmentCenterAngle)
+        const finalRotation = (spins * 360) + (360 - segmentCenterAngle);
 
-        // Convertir a rotación final
-        const extraSpins = 5;
-        const targetRotation =
-            (extraSpins * 360) +
-            (360 - targetAngle + 90);
+        console.log('\n📐 CÁLCULOS:');
+        console.log('├─ Ángulo por segmento:', segmentAngle + '°');
+        console.log('├─ Centro del segmento ganador:', segmentCenterAngle + '°');
+        console.log('├─ Vueltas completas:', spins);
+        console.log('└─ Rotación FINAL:', finalRotation + '°');
 
-        console.log("🎯 Ángulo objetivo:", targetAngle);
-        console.log("🎯 Rotación final:", targetRotation);
+        // PASO 4: ANIMAR
+        wheelElement.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.29, 0.98)';
+        wheelElement.style.transform = `rotate(${finalRotation}deg)`;
 
-        // PASO 4 → Animar la rueda
-        wheel.style.transition = "transform 5s cubic-bezier(0.25, 0.1, 0.25, 1)";
-        wheel.style.transform = `rotate(${targetRotation}deg)`;
+        console.log('🎬 Animación iniciada...');
 
-        // PASO 5 → Mostrar el resultado al finalizar animación
+        // PASO 5: Esperar fin de animación
+        await new Promise(resolve => setTimeout(resolve, 4100));
+
+        console.log('✅ Animación completada');
+
+        // PASO 6: Mostrar resultado
+        let prizeMessage = '';
+        let detailMessage = '';
+        
+        if (gameRewardData.rewardType === 'LoyaltyPoints') {
+            const points = gameRewardData.rewardValue || 0;
+            prizeMessage = `🎉 ¡Has ganado ${points.toLocaleString()} puntos! 🎉`;
+            detailMessage = `Los puntos han sido acreditados automáticamente.`;
+            if (gameRewardData.issuedRewardReference) {
+                detailMessage += `\n\nID: ${gameRewardData.issuedRewardReference}`;
+            }
+        } else if (gameRewardData.rewardType === 'Voucher') {
+            prizeMessage = `🎁 ¡Has ganado: ${gameRewardData.rewardName}! 🎁`;
+            detailMessage = `El voucher está disponible en tu perfil.`;
+            if (gameRewardData.issuedRewardReference) {
+                detailMessage += `\n\nID: ${gameRewardData.issuedRewardReference}`;
+            }
+        } else {
+            prizeMessage = `${gameRewardData.rewardName} 😔`;
+            detailMessage = '¡Sigue intentando!';
+        }
+
+        wheelPrizeText.textContent = prizeMessage;
+        resultDiv.classList.add('show');
+
+        // Actualizar estado local
+        const rewardIndex = participantGameRewards.findIndex(
+            pr => pr.gameParticipantRewardId === pendingReward.gameParticipantRewardId
+        );
+        
+        if (rewardIndex !== -1) {
+            participantGameRewards[rewardIndex].status = 'Rewarded';
+            participantGameRewards[rewardIndex].gameRewardId = gameRewardId;
+            participantGameRewards[rewardIndex].issuedRewardReference = gameRewardData.issuedRewardReference;
+        }
+
         setTimeout(() => {
-            wheel.style.transition = "none";
-            wheel.style.transform = `rotate(${360 - targetAngle + 90}deg)`;
+            alert(prizeMessage + '\n\n' + detailMessage);
+            setTimeout(() => resetWheel(), 2000);
+        }, 500);
 
-            resultText.innerHTML = `
-                🎉 <b>¡Felicidades!</b><br>
-                ${gameRewardData.rewardName} 🥳
-            `;
-
-            resultBox.classList.remove("hidden");
-
-            spinBtn.disabled = false;
-            spinBtn.innerHTML = "JUGAR DE NUEVO";
-            isSpinning = false;
-        }, 5000);
-
-    } catch (err) {
-        console.error("❌ Error:", err);
-        alert("Ocurrió un error al procesar la jugada.");
-        spinBtn.disabled = false;
-        spinBtn.innerHTML = "GIRAR RULETA";
+    } catch (error) {
+        console.error('❌ Error:', error);
+        alert('Error: ' + error.message);
+        spinButton.disabled = false;
+        spinButton.textContent = '🎰 Girar Ruleta';
         isSpinning = false;
     }
 }
+
 
 async function startWheel() {
     const membershipNumber = wheelMembershipInput.value.trim();
