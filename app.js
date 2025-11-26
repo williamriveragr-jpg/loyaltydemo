@@ -296,7 +296,7 @@ function initWheel() {
     wheelPrizes.forEach((prize, index) => {
         const segment = document.createElement('div');
         segment.className = 'wheel-segment';
-        
+        segment.style.transformOrigin = "0% 100%";
         // Rotar cada segmento según su posición
         const rotation = index * segmentAngle;
         segment.style.transform = `rotate(${rotation}deg)`;
@@ -407,9 +407,11 @@ async function spinWheel() {
         // Si el segmento está en 45°, necesitamos rotar -45° (o 315°)
         // para llevarlo a 0° (arriba)
         const rotationToAlign = 360 - segmentCenterAngle;
-        
-        // Rotación final: vueltas completas + ajuste para alinear
-        const finalRotation = totalSpinDegrees + rotationToAlign;
+
+        // FIX → compensar el desajuste del CSS
+        const visualOffset = segmentAngle / 2;
+
+        const finalRotation = totalSpinDegrees + rotationToAlign + visualOffset;
 
         console.log('\n📐 CÁLCULOS DE ROTACIÓN:');
         console.log('├─ Segmentos totales:', totalPrizes);
