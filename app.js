@@ -310,39 +310,31 @@ function initWheel() {
         label.className = 'wheel-label';
         label.textContent = prize.name;
         
-        // Calcular el ángulo central del segmento
+        // Calcular posición del texto (en el centro del segmento)
         const centerAngle = startAngle + (segmentAngle / 2);
+        const centerRad = (centerAngle - 90) * Math.PI / 180; // -90 para que 0° esté arriba
+        const radius = 60; // Porcentaje desde el centro
         
-        // Convertir a radianes (ajustando para que 0° esté arriba)
-        const angleRad = ((centerAngle - 90) * Math.PI) / 180;
-        
-        // Posicionar el texto cerca del borde (70% del radio desde el centro)
-        const distance = 70; // Porcentaje del radio
-        const x = 50 + distance * Math.cos(angleRad);
-        const y = 50 + distance * Math.sin(angleRad);
+        const x = 50 + radius * Math.cos(centerRad);
+        const y = 50 + radius * Math.sin(centerRad);
         
         label.style.position = 'absolute';
         label.style.left = `${x}%`;
         label.style.top = `${y}%`;
-        
-        // Rotar el texto para que apunte radialmente (SIN +90 = horizontal)
         label.style.transform = `translate(-50%, -50%) rotate(${centerAngle}deg)`;
-        
         label.style.color = 'white';
-        label.style.fontSize = '9px';
+        label.style.fontSize = '13px';
         label.style.fontWeight = 'bold';
-        label.style.textShadow = '1px 1px 3px rgba(0,0,0,0.9)';
+        label.style.textShadow = '1px 1px 3px rgba(0,0,0,0.8)';
         label.style.whiteSpace = 'nowrap';
         label.style.pointerEvents = 'none';
-        label.style.textAlign = 'center';
-        label.style.letterSpacing = '0.3px';
         
         label.setAttribute('data-prize-id', prize.id);
         label.setAttribute('data-prize-index', index);
         
         wheelElement.appendChild(label);
         
-        console.log(`Segmento ${index}: ${prize.name} (${startAngle}° - ${endAngle}°) - Texto en: ${x.toFixed(1)}%, ${y.toFixed(1)}%`);
+        console.log(`Segmento ${index}: ${prize.name} (${startAngle}° - ${endAngle}°)`);
     });
     
     conicGradient += gradientStops.join(', ') + ')';
@@ -350,6 +342,7 @@ function initWheel() {
     
     console.log('✅ Ruleta inicializada con conic-gradient');
 }
+
 async function spinWheel() {
     if (isSpinning) return;
     
