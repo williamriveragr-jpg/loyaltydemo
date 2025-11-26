@@ -312,7 +312,7 @@ function initWheel() {
         
         // Calcular posición del texto (en el centro del segmento)
         const centerAngle = startAngle + (segmentAngle / 2);
-        const centerRad = (centerAngle - 90) * Math.PI / 180; // -90 para que 0° esté arriba
+        const centerRad = (centerAngle - 85) * Math.PI / 180; // -90 para que 0° esté arriba
         const radius = 50; // Distancia desde el centro (en porcentaje)
         
         const x = 50 + radius * Math.cos(centerRad);
