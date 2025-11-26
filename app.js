@@ -494,7 +494,7 @@ async function buyProduct(productName, points) {
         );
         
         if (transactionResult.success) {
-            alert(`¡Producto canjeado exitosamente!\n\nProducto: ${productName}\nPuntos utilizados: ${points.toLocaleString()}\nTransacción: ${transactionResult.data.transactionNumber}`);
+            alert(`¡Producto canjeado exitosamente!\n\nProducto: ${productName}\nPuntos utilizados: ${(points * 100).toLocaleString()}\nTransacción: ${transactionResult.data.transactionNumber}`);
             showSection('perfil');
         } else {
             alert('Error al canjear producto: ' + transactionResult.error);
