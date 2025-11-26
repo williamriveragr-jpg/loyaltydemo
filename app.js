@@ -463,7 +463,7 @@ async function buyProduct(productName, points) {
     const loadingMessage = document.createElement('div');
     loadingMessage.className = 'loading show';
     loadingMessage.innerHTML = '<div class="spinner"></div><p>Procesando canje...</p>';
-    document.querySelector('#comprar').appendChild(loadingMessage);
+    document.querySelector('#canjear').appendChild(loadingMessage);
     
     try {
         const memberResponse = await fetch(WORKER_URL, {
