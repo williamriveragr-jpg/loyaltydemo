@@ -228,6 +228,9 @@ function initWheel() {
     });
 }
 
+// ============================================
+// SPIN THE WHEEL
+// ============================================
 async function loadGamePrizes(gameName) {
     try {
         const response = await fetch(WORKER_URL, {
@@ -237,7 +240,6 @@ async function loadGamePrizes(gameName) {
                 operation: "getGames",
                 data: { 
                     gameName: gameName,
-                    memberId: currentMember?.memberId, // O usar membershipNumber
                     membershipNumber: currentMember?.membershipNumber
                 }
             })
@@ -246,28 +248,192 @@ async function loadGamePrizes(gameName) {
         const result = await response.json();
         
         if (result.success) {
-            wheelPrizes = result.data.prizes.map(prize => ({
-                id: prize.id,
-                name: prize.name,
-                value: prize.value,
-                color: prize.color,
-                rewardType: prize.rewardType,
-                rewardDefinitionId: prize.rewardDefinitionId,
-                winProbability: prize.winProbability,
-                isAvailable: prize.isAvailable
+            // SEPARAR: Premios del juego (gameRewards)
+            wheelPrizes = result.data.gameRewards.map(reward => ({
+                id: reward.gameRewardId,
+                name: reward.name,
+                value: reward.rewardValue || 0,
+                color: reward.color,
+                rewardType: reward.rewardType,
+                description: reward.description,
+                imageUrl: reward.imageUrl
             }));
             
-            console.log('Premios cargados:', wheelPrizes);
+            // SEPARAR: Premios del participante (participantGameRewards)
+            participantGameRewards = result.data.participantGameRewards;
+            
+            console.log('=== INFORMACIÓN DEL JUEGO ===');
+            console.log('Premios del juego:', wheelPrizes);
+            console.log('Premios del participante:', participantGameRewards);
             console.log('Puede jugar:', result.data.canPlay);
+            
+            // IMPORTANTE: Verificar si ya existe un premio ganador de Salesforce
+            const rewardedPrize = participantGameRewards.find(pr => pr.status === 'Rewarded' && pr.gameRewardId);
+            
+            if (rewardedPrize) {
+                // Salesforce ya determinó el premio ganador
+                console.log('⚠️ Premio ya determinado por Salesforce:', rewardedPrize.gameRewardId);
+                currentMember.winningPrizeId = rewardedPrize.gameRewardId;
+                currentMember.gameParticipantRewardId = rewardedPrize.gameParticipantRewardId;
+                
+                // Solo animar la ruleta
+                alert('¡Ya tienes un premio ganado! Presiona "Girar" para revelarlo.');
+            } else {
+                // Verificar si puede jugar
+                const pendingReward = participantGameRewards.find(pr => pr.status === 'YetToReward');
+                
+                if (!pendingReward) {
+                    alert('No tienes oportunidades disponibles para este juego.');
+                    return false;
+                }
+                
+                currentMember.gameParticipantRewardId = pendingReward.gameParticipantRewardId;
+                console.log('Game Participant Reward ID:', currentMember.gameParticipantRewardId);
+            }
+            
             return true;
         } else {
             console.error('Error cargando premios:', result.error);
+            alert('Error: ' + result.error);
             return false;
         }
         
     } catch (error) {
         console.error('Error:', error);
+        alert('Error al cargar los premios del juego');
         return false;
+    }
+}
+
+async function spinWheel() {
+    if (isSpinning) return;
+    
+    isSpinning = true;
+    spinButton.disabled = true;
+    spinButton.textContent = 'Girando...';
+    resultDiv.classList.remove('show');
+
+    try {
+        let winningPrize;
+        
+        // CASO 1: Si ya existe un premio ganador de Salesforce (status = "Rewarded")
+        if (currentMember.winningPrizeId) {
+            winningPrize = wheelPrizes.find(p => p.id === currentMember.winningPrizeId);
+            console.log('🎯 Usando premio ya determinado por Salesforce:', winningPrize);
+        } 
+        // CASO 2: Salesforce aún no ha determinado el premio (status = "YetToReward")
+        else {
+            // Llamar a Salesforce para que determine el premio
+            const gameRewardResponse = await fetch(WORKER_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    operation: "recordGameReward",
+                    data: {
+                        gameParticipantRewardId: currentMember.gameParticipantRewardId,
+                        // Salesforce determinará automáticamente el gameRewardId según probabilidades
+                    }
+                })
+            });
+            
+            const gameRewardResult = await gameRewardResponse.json();
+            
+            if (!gameRewardResult.success) {
+                throw new Error('Error al registrar el premio en Salesforce');
+            }
+            
+            // Salesforce devuelve el gameRewardId ganador
+            const winningGameRewardId = gameRewardResult.data.gameRewardId;
+            winningPrize = wheelPrizes.find(p => p.id === winningGameRewardId);
+            
+            console.log('🎯 Salesforce determinó el premio:', winningPrize);
+        }
+
+        if (!winningPrize) {
+            throw new Error('No se pudo determinar el premio ganador');
+        }
+
+        console.log('=== PREMIO GANADOR ===');
+        console.log('ID del premio:', winningPrize.id);
+        console.log('Nombre:', winningPrize.name);
+        console.log('Tipo:', winningPrize.rewardType);
+        console.log('Valor:', winningPrize.value);
+
+        // 2. ANIMAR LA RULETA hacia el premio ganador
+        const prizeIndex = wheelPrizes.findIndex(p => p.id === winningPrize.id);
+        const segmentAngle = 360 / wheelPrizes.length;
+        const targetAngle = (prizeIndex * segmentAngle) + (segmentAngle / 2);
+        const spins = 5; // Número de vueltas completas
+        const finalRotation = (spins * 360) + (360 - targetAngle);
+
+        wheelElement.style.transition = 'transform 4s cubic-bezier(0.25, 0.1, 0.25, 1)';
+        wheelElement.style.transform = `rotate(${finalRotation}deg)`;
+
+        // 3. Esperar a que termine la animación
+        await new Promise(resolve => setTimeout(resolve, 4000));
+
+        // 4. Crear la transacción o voucher según el tipo de premio
+        let transactionResult;
+
+        if (winningPrize.rewardType === 'LoyaltyPoints') {
+            // Crear transacción de puntos
+            transactionResult = await createTransaction(
+                currentMember.memberId,
+                winningPrize.value,
+                winningPrize.name,
+                winningPrize.id
+            );
+        } else if (winningPrize.rewardType === 'Voucher') {
+            // Crear voucher
+            transactionResult = await createVoucher(
+                currentMember.memberId,
+                winningPrize.id,
+                winningPrize.name
+            );
+        } else if (winningPrize.rewardType === 'NoReward') {
+            // No crear transacción
+            transactionResult = {
+                success: true,
+                message: '¡Mejor suerte la próxima vez!'
+            };
+        }
+
+        // 5. Mostrar resultado
+        if (transactionResult && transactionResult.success) {
+            let prizeMessage = '';
+            
+            if (winningPrize.rewardType === 'LoyaltyPoints') {
+                prizeMessage = `🎉 ¡Has ganado ${winningPrize.value.toLocaleString()} puntos! 🎉`;
+            } else if (winningPrize.rewardType === 'Voucher') {
+                prizeMessage = `🎁 ¡Has ganado un voucher: ${winningPrize.name}! 🎁\nCódigo: ${transactionResult.data?.voucherCode || 'Ver en tu perfil'}`;
+            } else {
+                prizeMessage = `${winningPrize.name} 😔\n¡Inténtalo de nuevo!`;
+            }
+
+            wheelPrizeText.textContent = prizeMessage;
+            resultDiv.classList.add('show');
+
+            console.log('=== PREMIO ENTREGADO ===');
+            console.log('Resultado:', transactionResult);
+
+            setTimeout(() => {
+                alert(prizeMessage + '\n\n¡Revisa tu perfil para ver tus puntos actualizados!');
+                
+                setTimeout(() => {
+                    resetWheel();
+                }, 2000);
+            }, 500);
+
+        } else {
+            throw new Error(transactionResult?.error || 'Error procesando el premio');
+        }
+
+    } catch (error) {
+        console.error('Error en spinWheel:', error);
+        alert('Error: ' + error.message);
+        resetWheel();
+    } finally {
+        isSpinning = false;
     }
 }
 
@@ -316,69 +482,6 @@ async function startWheel() {
     } finally {
         loginLoading.classList.remove('show');
     }
-}
-
-async function spinWheel() {
-    if (isSpinning || wheelPrizes.length === 0) return;
-    
-    isSpinning = true;
-    spinButton.disabled = true;
-    resultDiv.classList.remove('show');
-    
-    const selectedPrize = selectPrizeByProbability();
-    const prizeIndex = wheelPrizes.findIndex(p => p.id === selectedPrize.id);
-    
-    const segmentAngle = 360 / wheelPrizes.length;
-    const targetAngle = (360 - (prizeIndex * segmentAngle)) + (segmentAngle / 2);
-    const totalRotation = 360 * 5 + targetAngle;
-    
-    wheelElement.style.transform = `rotate(${totalRotation}deg)`;
-    
-    setTimeout(async () => {
-        wheelPrizeText.innerHTML = `Has ganado: <strong>${selectedPrize.name}</strong>`;
-        resultDiv.classList.add('show');
-        
-        if (selectedPrize.rewardType === 'LoyaltyPoints' && selectedPrize.value > 0) {
-            try {
-                const transactionResult = await createTransaction(
-                    currentMember.memberId, 
-                    selectedPrize.value, 
-                    selectedPrize.name,
-                    selectedPrize.rewardDefinitionId
-                );
-                
-                if (transactionResult.success) {
-                    console.log('Puntos acreditados exitosamente');
-                } else {
-                    console.error('Error al acreditar puntos:', transactionResult.error);
-                }
-            } catch (error) {
-                console.error('Error al acreditar puntos:', error);
-            }
-        }
-        
-        if (selectedPrize.rewardType === 'Voucher' && selectedPrize.rewardDefinitionId) {
-            try {
-                const voucherResult = await createVoucher(
-                    currentMember.memberId,
-                    selectedPrize.rewardDefinitionId,
-                    selectedPrize.name
-                );
-                
-                if (voucherResult.success) {
-                    wheelPrizeText.innerHTML += `<br><small>Código: ${voucherResult.data.voucherCode}</small>`;
-                    console.log('Voucher creado exitosamente');
-                } else {
-                    console.error('Error al crear voucher:', voucherResult.error);
-                }
-            } catch (error) {
-                console.error('Error al crear voucher:', error);
-            }
-        }
-        
-        isSpinning = false;
-        spinButton.disabled = false;
-    }, 4000);
 }
 
 function selectPrizeByProbability() {
