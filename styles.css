@@ -516,12 +516,16 @@ input:focus, select:focus, textarea:focus {
     position: absolute;
     color: white;
     font-weight: bold;
-    font-size: 13px;
+    font-size: 12px;
     text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
     white-space: nowrap;
     pointer-events: none;
+    text-align: center;
+    /* Agregar un fondo semi-transparente para mejor legibilidad (opcional) */
+    background: rgba(0, 0, 0, 0.2);
+    padding: 3px 8px;
+    border-radius: 4px;
 }
-
 .wheel-pointer {
     position: absolute;
     top: -20px;
