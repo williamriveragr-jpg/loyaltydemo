@@ -310,10 +310,10 @@ function initWheel() {
         label.className = 'wheel-label';
         label.textContent = prize.name;
         
-        // Calcular posición del texto (en el centro del segmento)
+        // Calcular posición del texto (MÁS CERCA DEL CENTRO)
         const centerAngle = startAngle + (segmentAngle / 2);
-        const centerRad = (centerAngle - 85) * Math.PI / 180; // -90 para que 0° esté arriba
-        const radius = 50; // Distancia desde el centro (en porcentaje)
+        const centerRad = (centerAngle - 90) * Math.PI / 180; // -90 para que 0° esté arriba
+        const radius = 35; // REDUCIDO de 50 a 35 (más cerca del centro)
         
         const x = 50 + radius * Math.cos(centerRad);
         const y = 50 + radius * Math.sin(centerRad);
@@ -322,15 +322,14 @@ function initWheel() {
         label.style.left = `${x}%`;
         label.style.top = `${y}%`;
         
-        // IMPORTANTE: Rotar el texto para que apunte hacia afuera
-        // Ajustamos el ángulo para que sea perpendicular al radio
+        // Rotar el texto para que apunte hacia afuera
         const textRotation = centerAngle;
         label.style.transform = `translate(-50%, -50%) rotate(${textRotation}deg)`;
         
         label.style.color = 'white';
-        label.style.fontSize = '12px';
+        label.style.fontSize = '9px';
         label.style.fontWeight = 'bold';
-        label.style.textShadow = '1px 1px 3px rgba(0,0,0,0.8)';
+        label.style.textShadow = '1px 1px 3px rgba(0,0,0,0.9)';
         label.style.whiteSpace = 'nowrap';
         label.style.pointerEvents = 'none';
         label.style.textAlign = 'center';
