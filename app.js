@@ -268,25 +268,13 @@ async function loadGamePrizes(gameName) {
             console.log('Puede jugar:', result.data.canPlay);
             
             // IMPORTANTE: Verificar si ya existe un premio ganador de Salesforce
-            const rewardedPrize = participantGameRewards.find(pr => pr.status === 'Rewarded' && pr.gameRewardId);
+            const rewardedPrize = participantGameRewards.find(pr => pr.status === 'YetToReward' && pr.gameRewardId);
             
             if (rewardedPrize) {
                 // Salesforce ya determinó el premio ganador
                 console.log('⚠️ Premio ya determinado por Salesforce:', rewardedPrize.gameRewardId);
                 currentMember.winningPrizeId = rewardedPrize.gameRewardId;
                 currentMember.gameParticipantRewardId = rewardedPrize.gameParticipantRewardId;
-                
-                // Solo animar la ruleta
-                alert('¡Ya tienes un premio ganado! Presiona "Girar" para revelarlo.');
-            } else {
-                // Verificar si puede jugar
-                const pendingReward = participantGameRewards.find(pr => pr.status === 'YetToReward');
-                
-                if (!pendingReward) {
-                    alert('No tienes oportunidades disponibles para este juego.');
-                    return false;
-                }
-                
                 currentMember.gameParticipantRewardId = pendingReward.gameParticipantRewardId;
                 console.log('Game Participant Reward ID:', currentMember.gameParticipantRewardId);
             }
