@@ -440,7 +440,7 @@ async function spinWheel() {
         console.log('✅ Animación completada');
 
         // PASO 6: Mostrar resultado
-        let prizeMessage = '';
+           let prizeMessage = '';
         let detailMessage = '';
         
         if (gameRewardData.rewardType === 'LoyaltyPoints') {
@@ -448,20 +448,24 @@ async function spinWheel() {
             prizeMessage = `🎉 ¡Has ganado ${points.toLocaleString()} puntos! 🎉`;
             detailMessage = `Los puntos han sido acreditados automáticamente.`;
             if (gameRewardData.issuedRewardReference) {
-                detailMessage += `\n\nID: ${gameRewardData.issuedRewardReference}`;
+                detailMessage += `<br><br><small>ID: ${gameRewardData.issuedRewardReference}</small>`;
             }
         } else if (gameRewardData.rewardType === 'Voucher') {
             prizeMessage = `🎁 ¡Has ganado: ${gameRewardData.rewardName}! 🎁`;
             detailMessage = `El voucher está disponible en tu perfil.`;
             if (gameRewardData.issuedRewardReference) {
-                detailMessage += `\n\nID: ${gameRewardData.issuedRewardReference}`;
+                detailMessage += `<br><br><small>Código: ${gameRewardData.issuedRewardReference}</small>`;
             }
         } else {
             prizeMessage = `${gameRewardData.rewardName} 😔`;
-            detailMessage = '¡Sigue intentando!';
+            detailMessage = '¡Sigue intentando! Tendrás más oportunidades.';
         }
 
-        wheelPrizeText.textContent = prizeMessage;
+        // Mostrar el mensaje principal
+        wheelPrizeText.innerHTML = `
+            <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">${prizeMessage}</div>
+            <div style="font-size: 14px; color: #155724;">${detailMessage}</div>
+        `;
         resultDiv.classList.add('show');
 
         // Actualizar estado local
@@ -475,10 +479,10 @@ async function spinWheel() {
             participantGameRewards[rewardIndex].issuedRewardReference = gameRewardData.issuedRewardReference;
         }
 
+        // Mostrar alert después de 1 segundo
         setTimeout(() => {
-            alert(prizeMessage + '\n\n' + detailMessage);
             setTimeout(() => resetWheel(), 2000);
-        }, 500);
+        }, 1000);
 
     } catch (error) {
         console.error('❌ Error:', error);
