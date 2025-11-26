@@ -292,51 +292,40 @@ function initWheel() {
     
     console.log('🎨 Inicializando ruleta:');
     console.log('Total de premios:', totalPrizes);
-    console.log('Ángulo por segmento:', segmentAngle);
+    console.log('Ángulo por segmento:', segmentAngle + '°');
     
     wheelPrizes.forEach((prize, index) => {
         const segment = document.createElement('div');
         segment.className = 'wheel-segment';
         
-        // Calcular rotación del segmento
+        // Rotar cada segmento según su posición
         const rotation = index * segmentAngle;
         
-        // Calcular el clip-path para crear el segmento tipo "pizza"
-        // Usamos coordenadas polares convertidas a cartesianas
-        const startAngle = 0;
-        const endAngle = segmentAngle;
+        // Aplicar transformación con skewY para crear el segmento
+        const skewAngle = 90 - segmentAngle;
         
-        // Convertir ángulos a radianes y luego a coordenadas cartesianas
-        const startRad = (startAngle - 90) * Math.PI / 180;
-        const endRad = (endAngle - 90) * Math.PI / 180;
-        
-        const x1 = 50 + 50 * Math.cos(startRad);
-        const y1 = 50 + 50 * Math.sin(startRad);
-        const x2 = 50 + 50 * Math.cos(endRad);
-        const y2 = 50 + 50 * Math.sin(endRad);
-        
-        // Aplicar estilos
-        segment.style.transform = `rotate(${rotation}deg)`;
-        segment.style.clipPath = `polygon(50% 50%, ${x1}% ${y1}%, ${x2}% ${y2}%)`;
+        segment.style.transform = `rotate(${rotation}deg) skewY(${skewAngle}deg)`;
         segment.style.background = prize.color || '#667eea';
+        segment.style.transformOrigin = '100% 100%';
         
-        // Agregar atributos data para debugging
+        // Agregar atributos data
         segment.setAttribute('data-prize-id', prize.id);
         segment.setAttribute('data-prize-index', index);
         segment.setAttribute('data-prize-name', prize.name);
         
-        // Crear etiqueta de texto
+        // Crear y posicionar el texto
         const label = document.createElement('span');
         label.textContent = prize.name;
-        label.style.transform = `rotate(${segmentAngle / 2}deg)`; // Centrar texto
+        label.style.transform = `skewY(-${skewAngle}deg) rotate(${segmentAngle/2}deg)`;
+        label.style.transformOrigin = 'center';
         segment.appendChild(label);
         
         wheelElement.appendChild(segment);
         
-        console.log(`Segmento ${index}: ${prize.name} (ID: ${prize.id}) - Rotación: ${rotation}°`);
+        console.log(`Segmento ${index}: ${prize.name} (${rotation}°)`);
     });
     
-    console.log('✅ Ruleta inicializada');
+    console.log('✅ Ruleta inicializada correctamente');
 }
 
 async function spinWheel() {
