@@ -710,3 +710,91 @@ function showWheelLoginMessage(text, type) {
     loginMessage.textContent = text;
     loginMessage.className = `message ${type} show`;
 }
+
+
+// ============================================
+// COMPRA DE PRODUCTOS CON DINERO
+// ============================================
+async function purchaseProduct(productName, price, pointsToEarn) {
+    const membershipNumber = prompt('Ingresa tu número de membresía para completar la compra:');
+    
+    if (!membershipNumber) {
+        alert('Debes ingresar tu número de membresía para continuar');
+        return;
+    }
+    
+    if (!confirm(`¿Deseas comprar ${productName} por €${price}?\n\nGanarás ${pointsToEarn.toLocaleString()} puntos automáticamente.`)) {
+        return;
+    }
+    
+    const loadingMessage = document.createElement('div');
+    loadingMessage.className = 'loading show';
+    loadingMessage.innerHTML = '<div class="spinner"></div><p>Procesando compra...</p>';
+    document.querySelector('#tienda').appendChild(loadingMessage);
+    
+    try {
+        // Verificar que el miembro existe
+        const memberResponse = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                operation: "getMember",
+                data: { membershipNumber: membershipNumber }
+            })
+        });
+        
+        const memberResult = await memberResponse.json();
+        
+        if (!memberResult.success) {
+            alert('Miembro no encontrado. Verifica tu número de membresía.');
+            return;
+        }
+        
+        // Crear transacción de compra (Accrual Purchase)
+        const purchaseResult = await createPurchaseTransaction(
+            memberResult.data.memberId,
+            pointsToEarn,
+            productName,
+            price
+        );
+        
+        if (purchaseResult.success) {
+            alert(`¡Compra realizada exitosamente! 🎉\n\nProducto: ${productName}\nPrecio: €${price}\nPuntos ganados: ${pointsToEarn.toLocaleString()}\nTransacción: ${purchaseResult.data.transactionNumber}\n\n¡Gracias por tu compra!`);
+            
+            // Opcional: Redirigir al perfil para ver los puntos actualizados
+            setTimeout(() => {
+                document.getElementById('searchInput').value = membershipNumber;
+                showSection('perfil');
+                searchProfile();
+            }, 1000);
+        } else {
+            alert('Error al procesar la compra: ' + purchaseResult.error);
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al procesar la compra. Intenta nuevamente.');
+    } finally {
+        loadingMessage.remove();
+    }
+}
+
+async function createPurchaseTransaction(memberId, pointsToEarn, productName, price) {
+    const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            operation: "createTransaction",
+            data: {
+                memberId: memberId,
+                amount: pointsToEarn, // Puntos que se acreditarán
+                journalSubType: "Purchase",
+                productName: productName,
+                transactionAmount: price, // Precio real del producto
+                activityDate: new Date().toISOString().split('T')[0]
+            }
+        })
+    });
+    return await response.json();
+}
+
