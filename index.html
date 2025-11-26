@@ -7,9 +7,6 @@
         <link rel="stylesheet" href="styles.css">
    </head>
    <body>
-      <!-- ============================================
-         BARRA DE NAVEGACIÓN
-         ============================================ -->
       <script src="app.js"></script>   
       <nav class="navbar">
          <div class="nav-container">
@@ -27,7 +24,11 @@
                   <a href="#" class="nav-link" data-section="alta" onclick="showSection('alta')">Alta</a>
                </li>
                <li class="nav-item">
-                  <a href="#" class="nav-link" data-section="comprar" onclick="showSection('comprar')">Comprar</a>
+                  <a href="#" class="nav-link" data-section="comprar" onclick="showSection('comprar')">Canjear Puntos</a>
+               </li>
+               <!-- NUEVA TAB -->
+               <li class="nav-item">
+                  <a href="#" class="nav-link" data-section="tienda" onclick="showSection('tienda')">Comprar</a>
                </li>
                <li class="nav-item">
                   <a href="#" class="nav-link" data-section="rueda" onclick="showSection('rueda')">Prueba tu Suerte</a>
@@ -41,385 +42,127 @@
             </ul>
          </div>
       </nav>
-      <!-- ============================================
-         CONTENIDO PRINCIPAL
-         ============================================ -->
+
       <div class="main-container">
-         <!-- SECCIÓN HOME -->
-         <section id="home" class="section active">
-            <div class="hero">
-               <h1>Bienvenido a Demo Loyalty</h1>
-               <p>Tu programa de fidelización con beneficios exclusivos</p>
-               <button class="btn" onclick="showSection('alta')">Únete Ahora</button>
-               <button class="btn btn-secondary" onclick="showSection('perfil')">Consultar Puntos</button>
-            </div>
-            <div class="benefits-grid">
-               <div class="benefit-card">
+         <!-- ...existing code... -->
+
+         <!-- NUEVA SECCIÓN TIENDA (COMPRA CON DINERO) -->
+         <section id="tienda" class="section">
+            <h1>🛒 Tienda Online</h1>
+            <p class="subtitle">Compra productos y gana puntos automáticamente</p>
+            
+            <div class="benefits-grid" style="margin-bottom: 30px;">
+               <div class="benefit-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+                  <div class="benefit-icon">💰</div>
+                  <h3>Gana Puntos</h3>
+                  <p>Por cada compra, acumula puntos automáticamente</p>
+               </div>
+               <div class="benefit-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white;">
                   <div class="benefit-icon">🎁</div>
-                  <h3>Recompensas Exclusivas</h3>
-                  <p>Accede a productos y servicios premium con tus puntos acumulados</p>
+                  <h3>Promociones</h3>
+                  <p>Productos seleccionados con puntos extra</p>
                </div>
-               <div class="benefit-card">
-                  <div class="benefit-icon">⭐</div>
-                  <h3>Niveles VIP</h3>
-                  <p>Sube de nivel y desbloquea beneficios cada vez más exclusivos</p>
-               </div>
-               <div class="benefit-card">
-                  <div class="benefit-icon">🏨</div>
-                  <h3>Descuentos en Hoteles</h3>
-                  <p>Disfruta de tarifas especiales en nuestra red de servicios</p>
-               </div>
-               <div class="benefit-card">
-                  <div class="benefit-icon">✈️</div>
-                  <h3>Viajes Premium</h3>
-                  <p>Canje tus puntos por experiencias de viaje inolvidables</p>
+               <div class="benefit-card" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+                  <div class="benefit-icon">⚡</div>
+                  <h3>Entrega Rápida</h3>
+                  <p>Recibe tus productos en tiempo récord</p>
                </div>
             </div>
-         </section>
-         <!-- SECCIÓN ALTA (REGISTRO) -->
-         <section id="alta" class="section">
-            <h1>Registro de Nuevo Miembro</h1>
-            <p class="subtitle">Completa el formulario para unirte a nuestro programa</p>
-            <form id="loyaltyForm">
-               <div class="form-row">
-                  <div class="form-group">
-                     <label for="firstName">Nombre <span class="required">*</span></label>
-                     <input type="text" id="firstName" name="firstName" required>
-                  </div>
-                  <div class="form-group">
-                     <label for="lastName">Apellidos <span class="required">*</span></label>
-                     <input type="text" id="lastName" name="lastName" required>
-                  </div>
-               </div>
-               <div class="form-row">
-                  <div class="form-group">
-                     <label for="email">Email <span class="required">*</span></label>
-                     <input type="email" id="email" name="email" required>
-                  </div>
-                  <div class="form-group">
-                     <label for="phone">Teléfono</label>
-                     <input type="tel" id="phone" name="phone">
-                  </div>
-               </div>
-               <div class="form-row">
-                  <div class="form-group">
-                     <label for="birthDate">Fecha de Nacimiento</label>
-                     <input type="date" id="birthDate" name="birthDate">
-                  </div>
-                  <div class="form-group">
-                     <label for="enrollmentChannel">Canal de Registro <span class="required">*</span></label>
-                     <select id="enrollmentChannel" name="enrollmentChannel" required>
-                        <option value="">Seleccione...</option>
-                        <option value="Web">Web</option>
-                        <option value="Mobile App">Mobile App</option>
-                        <option value="Call Center">Call Center</option>
-                     </select>
-                  </div>
-               </div>
-               <div class="form-group">
-                  <label for="membershipNumber">Número de Membresía</label>
-                  <input type="text" id="membershipNumber" name="membershipNumber" placeholder="Se generará automáticamente" readonly>
-               </div>
-               <button type="submit" class="btn" id="submitBtn">Registrarse</button>
-               <button type="reset" class="btn btn-secondary">Limpiar</button>
-            </form>
-            <div class="loading" id="loading">
-               <div class="spinner"></div>
-               <p>Procesando registro...</p>
-            </div>
-            <div class="message" id="message"></div>
-         </section>
-         <!-- SECCIÓN COMPRAR -->
-         <section id="comprar" class="section">
-            <h1>Tienda de Recompensas</h1>
-            <p class="subtitle">Canjea tus puntos por productos exclusivos</p>
+
             <div class="products-grid">
                <div class="product-card">
-                  <div class="product-image">🏨</div>
+                  <div class="product-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">🏨</div>
                   <div class="product-info">
-                     <div class="product-title">Dia piscina gratis</div>
+                     <div class="product-title">Noche de Hotel</div>
                      <div class="product-description">
-                        Un dia de piscina gratis en nuestras instalaciones
-                     </div>
-                     <div class="product-price">
-                        <span class="price">€150</span>
-                        <span class="points">15,000 pts</span>
-                     </div>
-                     <button class="btn" onclick="buyProduct('Dia piscina gratis', 150)">Canjear</button>
-                  </div>
-               </div>
-               <div class="product-card">
-                  <div class="product-image">🍽️</div>
-                  <div class="product-info">
-                     <div class="product-title">Cena Gourmet</div>
-                     <div class="product-description">
-                        Experiencia gastronómica para 2 personas en restaurante premium
-                     </div>
-                     <div class="product-price">
-                        <span class="price">€80</span>
-                        <span class="points">8,000 pts</span>
-                     </div>
-                     <button class="btn" onclick="buyProduct('Cena Gourmet', 80)">Canjear</button>
-                  </div>
-               </div>
-               <div class="product-card">
-                  <div class="product-image">💆</div>
-                  <div class="product-info">
-                     <div class="product-title">Spa Premium</div>
-                     <div class="product-description">
-                        Día completo de spa con masajes y tratamientos de lujo
+                        Una noche en habitación doble con desayuno incluido
                      </div>
                      <div class="product-price">
                         <span class="price">€120</span>
-                        <span class="points">12,000 pts</span>
+                        <span class="points" style="color: #28a745;">+1,200 pts</span>
                      </div>
-                     <button class="btn" onclick="buyProduct('Spa Premium', 120)">Canjear</button>
+                     <button class="btn" onclick="purchaseProduct('Noche de Hotel', 120, 1200)">Comprar Ahora</button>
                   </div>
                </div>
+
                <div class="product-card">
-                  <div class="product-image">✈️</div>
+                  <div class="product-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🍽️</div>
                   <div class="product-info">
-                     <div class="product-title">Upgrade de Vuelo</div>
+                     <div class="product-title">Menú Degustación</div>
                      <div class="product-description">
-                        Mejora tu asiento a clase business en tu próximo vuelo
+                        Menú premium de 5 platos con maridaje para 2 personas
                      </div>
                      <div class="product-price">
-                        <span class="price">€200</span>
-                        <span class="points">20,000 pts</span>
+                        <span class="price">€90</span>
+                        <span class="points" style="color: #28a745;">+900 pts</span>
                      </div>
-                     <button class="btn" onclick="buyProduct('Upgrade Vuelo', 200)">Canjear</button>
+                     <button class="btn" onclick="purchaseProduct('Menú Degustación', 90, 900)">Comprar Ahora</button>
                   </div>
                </div>
+
                <div class="product-card">
-                  <div class="product-image">🎫</div>
+                  <div class="product-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">💆</div>
                   <div class="product-info">
-                     <div class="product-title">Entradas VIP</div>
+                     <div class="product-title">Masaje Relajante</div>
                      <div class="product-description">
-                        Acceso exclusivo a eventos y espectáculos premium
+                        Sesión de masaje de 60 minutos con aromaterapia
                      </div>
                      <div class="product-price">
-                        <span class="price">€100</span>
-                        <span class="points">10,000 pts</span>
+                        <span class="price">€60</span>
+                        <span class="points" style="color: #28a745;">+600 pts</span>
                      </div>
-                     <button class="btn" onclick="buyProduct('Entradas VIP', 100)">Canjear</button>
+                     <button class="btn" onclick="purchaseProduct('Masaje Relajante', 60, 600)">Comprar Ahora</button>
                   </div>
                </div>
+
                <div class="product-card">
-                  <div class="product-image">🎁</div>
+                  <div class="product-image" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">🎫</div>
                   <div class="product-info">
-                     <div class="product-title">Tarjeta Regalo</div>
+                     <div class="product-title">Entrada Concierto</div>
                      <div class="product-description">
-                        Tarjeta regalo de €50 para usar en cualquier servicio
+                        Entrada VIP para evento musical con acceso backstage
                      </div>
                      <div class="product-price">
-                        <span class="price">€50</span>
-                        <span class="points">5,000 pts</span>
+                        <span class="price">€150</span>
+                        <span class="points" style="color: #28a745;">+1,500 pts</span>
                      </div>
-                     <button class="btn" onclick="buyProduct('Tarjeta Regalo', 50)">Canjear</button>
+                     <button class="btn" onclick="purchaseProduct('Entrada Concierto', 150, 1500)">Comprar Ahora</button>
                   </div>
                </div>
-            </div>
-         </section>
-         <!-- SECCIÓN SPIN THE WHEEL -->
-         <section id="rueda" class="section">
-            <div class="wheel-container">
-               <h1>🎰 Prueba tu Suerte</h1>
-               <p class="subtitle">¡Gira la ruleta y gana premios increíbles!</p>
-               <!-- Login de la Ruleta -->
-               <div class="wheel-login" id="wheelLogin">
-                  <div class="form-group">
-                     <label for="wheelMembershipNumber">Número de Membresía <span class="required">*</span></label>
-                     <input type="text" id="wheelMembershipNumber" placeholder="Ingresa tu número de membresía">
-                  </div>
-                  <button class="btn" onclick="startWheel()">Empezar a Jugar</button>
-                  <div class="loading" id="wheelLoginLoading">
-                     <div class="spinner"></div>
-                     <p>Verificando membresía...</p>
-                  </div>
-                  <div class="message" id="wheelLoginMessage"></div>
-               </div>
-               <!-- Juego de la Ruleta -->
-               <div class="wheel-game" id="wheelGame">
-                  <div class="wheel-wrapper">
-                     <div class="wheel-pointer"></div>
-                     <div class="wheel" id="wheel">
-                        <!-- Segmentos generados dinámicamente -->
+
+               <div class="product-card">
+                  <div class="product-image" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">🍷</div>
+                  <div class="product-info">
+                     <div class="product-title">Cata de Vinos</div>
+                     <div class="product-description">
+                        Experiencia de cata con sumiller profesional y 6 vinos premium
                      </div>
-                     <div class="wheel-center"></div>
-                  </div>
-                  <button class="spin-button" id="spinButton" onclick="spinWheel()">
-                  🎰 GIRAR RULETA
-                  </button>
-                  <div class="wheel-result" id="wheelResult">
-                     <h3>🎉 ¡Felicidades!</h3>
-                     <p id="wheelPrize">Has ganado: <strong>500 Puntos</strong></p>
-                  </div>
-                  <button class="btn btn-secondary" style="margin-top: 20px;" onclick="resetWheel()">
-                  Jugar de Nuevo
-                  </button>
-               </div>
-            </div>
-         </section>
-         <!-- SECCIÓN CONSULTAR PERFIL -->
-         <section id="perfil" class="section">
-            <h1>Consultar Perfil de Miembro</h1>
-            <p class="subtitle">Busca por número de membresía</p>
-            <div class="profile-search">
-               <input type="text" id="searchInput" placeholder="Ingresa tu número de membresía">
-               <button class="btn" onclick="searchProfile()">Buscar</button>
-            </div>
-            <div class="loading" id="loadingProfile">
-               <div class="spinner"></div>
-               <p>Buscando perfil...</p>
-            </div>
-            <div class="message" id="profileMessage"></div>
-            <div class="profile-card" id="profileCard">
-               <div class="profile-header">
-                  <div class="profile-avatar" id="profileAvatar">JD</div>
-                  <div class="profile-name">
-                     <h2 id="profileName">John Doe</h2>
-                     <span class="profile-tier" id="profileTier">Gold Member</span>
-                  </div>
-               </div>
-               <div class="profile-stats">
-                  <div class="stat-card">
-                     <div class="stat-value" id="totalPoints">25,450</div>
-                     <div class="stat-label">Puntos Totales</div>
-                  </div>
-                  <div class="stat-card">
-                     <div class="stat-value" id="availablePoints">18,200</div>
-                     <div class="stat-label">Puntos Disponibles</div>
-                  </div>
-                  <div class="stat-card">
-                     <div class="stat-value" id="tierPoints">7,250</div>
-                     <div class="stat-label">Puntos de Nivel</div>
-                  </div>
-                  <div class="stat-card">
-                     <div class="stat-value" id="memberSince">2 años</div>
-                     <div class="stat-label">Miembro desde</div>
-                  </div>
-               </div>
-               <h3 style="margin-bottom: 20px; color: #333;">Información Personal</h3>
-               <div class="profile-details">
-                  <div class="detail-item">
-                     <div class="detail-label">Email</div>
-                     <div class="detail-value" id="profileEmail">john.doe@email.com</div>
-                  </div>
-                  <div class="detail-item">
-                     <div class="detail-label">Teléfono</div>
-                     <div class="detail-value" id="profilePhone">+34 600 123 456</div>
-                  </div>
-                  <div class="detail-item">
-                     <div class="detail-label">Número de Membresía</div>
-                     <div class="detail-value" id="profileMembership">LM123456789</div>
-                  </div>
-                  <div class="detail-item">
-                     <div class="detail-label">Canal de Registro</div>
-                     <div class="detail-value" id="profileChannel">Web</div>
-                  </div>
-                  <div class="detail-item">
-                     <div class="detail-label">Fecha de Registro</div>
-                     <div class="detail-value" id="profileEnrollmentDate">15/01/2023</div>
-                  </div>
-                  <div class="detail-item">
-                     <div class="detail-label">Estado</div>
-                     <div class="detail-value" id="profileStatus">Activo</div>
-                  </div>
-               </div>
-            </div>
-         </section>
-         <!-- SECCIÓN REDIMIR VOUCHER -->
-         <section id="voucher" class="section">
-            <h1>🎫 Redimir Voucher</h1>
-            <p class="subtitle">Ingresa tu código de voucher para obtener descuentos y beneficios</p>
-            <!-- Formulario de Redención -->
-            <div style="max-width: 600px; margin: 0 auto;">
-               <div class="form-group">
-                  <label for="voucherCode">Código de Voucher <span class="required">*</span></label>
-                  <input type="text" id="voucherCode" placeholder="Ej: VCH123456789" style="text-transform: uppercase;">
-               </div>
-               <div class="form-group">
-                  <label for="voucherMembershipNumber">Número de Membresía <span class="required">*</span></label>
-                  <input type="text" id="voucherMembershipNumber" placeholder="Ingresa tu número de membresía">
-               </div>
-               <button class="btn" onclick="redeemVoucher()">🎁 Redimir Voucher</button>
-               <div class="loading" id="voucherLoading">
-                  <div class="spinner"></div>
-                  <p>Procesando redención...</p>
-               </div>
-               <div class="message" id="voucherMessage"></div>
-            </div>
-            <!-- Resultado de Redención -->
-            <div id="voucherResult" style="display: none; margin-top: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
-               <div style="background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); padding: 30px; border-radius: 10px; text-align: center;">
-                  <div style="font-size: 64px; margin-bottom: 20px;">🎉</div>
-                  <h2 style="color: #155724; margin-bottom: 15px;">¡Voucher Redimido Exitosamente!</h2>
-                  <div style="background: white; padding: 20px; border-radius: 10px; margin: 20px 0;">
-                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: left;">
-                        <div>
-                           <div style="font-size: 12px; color: #666; text-transform: uppercase;">Código</div>
-                           <div style="font-size: 18px; font-weight: bold; color: #333;" id="redeemedCode">VCH123456</div>
-                        </div>
-                        <div>
-                           <div style="font-size: 12px; color: #666; text-transform: uppercase;">Tipo</div>
-                           <div style="font-size: 18px; font-weight: bold; color: #333;" id="redeemedType">Descuento</div>
-                        </div>
-                        <div>
-                           <div style="font-size: 12px; color: #666; text-transform: uppercase;">Valor</div>
-                           <div style="font-size: 18px; font-weight: bold; color: #667eea;" id="redeemedValue">10% OFF</div>
-                        </div>
-                        <div>
-                           <div style="font-size: 12px; color: #666; text-transform: uppercase;">Válido hasta</div>
-                           <div style="font-size: 18px; font-weight: bold; color: #333;" id="redeemedExpiry">31/12/2025</div>
-                        </div>
+                     <div class="product-price">
+                        <span class="price">€75</span>
+                        <span class="points" style="color: #28a745;">+750 pts</span>
                      </div>
-                  </div>
-                  <div style="background: #fff3cd; padding: 15px; border-radius: 5px; margin-top: 20px;">
-                     <p style="color: #856404; margin: 0; font-size: 14px;">
-                        <strong>📌 Importante:</strong> Este voucher ha sido aplicado a tu cuenta. 
-                        Puedes usarlo en tu próxima compra o reserva.
-                     </p>
-                  </div>
-                  <button class="btn" style="margin-top: 20px;" onclick="resetVoucherForm()">
-                  Redimir Otro Voucher
-                  </button>
-               </div>
-            </div>
-            <!-- Información de Vouchers -->
-            <div style="margin-top: 50px;">
-               <h3 style="color: #333; margin-bottom: 20px;">ℹ️ ¿Cómo funcionan los vouchers?</h3>
-               <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                  <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #667eea;">
-                     <div style="font-size: 32px; margin-bottom: 10px;">🎁</div>
-                     <h4 style="color: #333; margin-bottom: 10px;">Obtén Vouchers</h4>
-                     <p style="color: #666; font-size: 14px; line-height: 1.6;">
-                        Gana vouchers jugando en la ruleta, participando en promociones o como recompensa por tu fidelidad.
-                     </p>
-                  </div>
-                  <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #764ba2;">
-                     <div style="font-size: 32px; margin-bottom: 10px;">🔍</div>
-                     <h4 style="color: #333; margin-bottom: 10px;">Verifica el Código</h4>
-                     <p style="color: #666; font-size: 14px; line-height: 1.6;">
-                        Ingresa tu código de voucher y número de membresía para verificar su validez y beneficios.
-                     </p>
-                  </div>
-                  <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; border-left: 4px solid #f093fb;">
-                     <div style="font-size: 32px; margin-bottom: 10px;">✅</div>
-                     <h4 style="color: #333; margin-bottom: 10px;">Redime y Disfruta</h4>
-                     <p style="color: #666; font-size: 14px; line-height: 1.6;">
-                        Una vez redimido, el descuento o beneficio se aplicará automáticamente en tu próxima transacción.
-                     </p>
+                     <button class="btn" onclick="purchaseProduct('Cata de Vinos', 75, 750)">Comprar Ahora</button>
                   </div>
                </div>
-            </div>
-            <!-- Mis Vouchers Activos -->
-            <div id="activeVouchers" style="margin-top: 50px; display: none;">
-               <h3 style="color: #333; margin-bottom: 20px;">🎫 Mis Vouchers Activos</h3>
-               <div id="vouchersList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
-                  <!-- Vouchers se cargarán dinámicamente aquí -->
+
+               <div class="product-card">
+                  <div class="product-image" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">🧘</div>
+                  <div class="product-info">
+                     <div class="product-title">Clase de Yoga</div>
+                     <div class="product-description">
+                        Paquete de 5 clases de yoga con instructor certificado
+                     </div>
+                     <div class="product-price">
+                        <span class="price">€45</span>
+                        <span class="points" style="color: #28a745;">+450 pts</span>
+                     </div>
+                     <button class="btn" onclick="purchaseProduct('Clase de Yoga', 45, 450)">Comprar Ahora</button>
+                  </div>
                </div>
             </div>
          </section>
+
+         <!-- ...existing code... -->
       </div>
    </body>
 </html>
