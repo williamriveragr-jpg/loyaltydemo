@@ -240,7 +240,7 @@ async function loadGamePrizes(gameName) {
                 operation: "getGames",
                 data: { 
                     gameName: gameName,
-                    membershipNumber: currentMember?.membershipNumber
+                    membershipNumber: wheelMembershipInput.value.trim()
                 }
             })
         });
