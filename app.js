@@ -235,7 +235,11 @@ async function loadGamePrizes(gameName) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 operation: "getGames",
-                data: { gameName: gameName }
+                data: { 
+                    gameName: gameName,
+                    memberId: currentMember?.memberId, // O usar membershipNumber
+                    membershipNumber: currentMember?.membershipNumber
+                }
             })
         });
 
@@ -254,6 +258,7 @@ async function loadGamePrizes(gameName) {
             }));
             
             console.log('Premios cargados:', wheelPrizes);
+            console.log('Puede jugar:', result.data.canPlay);
             return true;
         } else {
             console.error('Error cargando premios:', result.error);
