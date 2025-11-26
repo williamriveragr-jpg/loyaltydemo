@@ -294,38 +294,53 @@ function initWheel() {
     console.log('Total de premios:', totalPrizes);
     console.log('Ángulo por segmento:', segmentAngle + '°');
     
+    // Crear gradiente cónico dinámico
+    let conicGradient = 'conic-gradient(from 0deg, ';
+    let gradientStops = [];
+    
     wheelPrizes.forEach((prize, index) => {
-        const segment = document.createElement('div');
-        segment.className = 'wheel-segment';
+        const startAngle = index * segmentAngle;
+        const endAngle = (index + 1) * segmentAngle;
+        const color = prize.color || '#667eea';
         
-        // Rotar cada segmento según su posición
-        const rotation = index * segmentAngle;
+        gradientStops.push(`${color} ${startAngle}deg ${endAngle}deg`);
         
-        // Aplicar transformación con skewY para crear el segmento
-        const skewAngle = 90 - segmentAngle;
-        
-        segment.style.transform = `rotate(${rotation}deg) skewY(${skewAngle}deg)`;
-        segment.style.background = prize.color || '#667eea';
-        segment.style.transformOrigin = '100% 100%';
-        
-        // Agregar atributos data
-        segment.setAttribute('data-prize-id', prize.id);
-        segment.setAttribute('data-prize-index', index);
-        segment.setAttribute('data-prize-name', prize.name);
-        
-        // Crear y posicionar el texto
-        const label = document.createElement('span');
+        // Crear etiqueta de texto
+        const label = document.createElement('div');
+        label.className = 'wheel-label';
         label.textContent = prize.name;
-        label.style.transform = `skewY(-${skewAngle}deg) rotate(${segmentAngle/2}deg)`;
-        label.style.transformOrigin = 'center';
-        segment.appendChild(label);
         
-        wheelElement.appendChild(segment);
+        // Calcular posición del texto (en el centro del segmento)
+        const centerAngle = startAngle + (segmentAngle / 2);
+        const centerRad = (centerAngle - 90) * Math.PI / 180; // -90 para que 0° esté arriba
+        const radius = 60; // Porcentaje desde el centro
         
-        console.log(`Segmento ${index}: ${prize.name} (${rotation}°)`);
+        const x = 50 + radius * Math.cos(centerRad);
+        const y = 50 + radius * Math.sin(centerRad);
+        
+        label.style.position = 'absolute';
+        label.style.left = `${x}%`;
+        label.style.top = `${y}%`;
+        label.style.transform = `translate(-50%, -50%) rotate(${centerAngle}deg)`;
+        label.style.color = 'white';
+        label.style.fontSize = '13px';
+        label.style.fontWeight = 'bold';
+        label.style.textShadow = '1px 1px 3px rgba(0,0,0,0.8)';
+        label.style.whiteSpace = 'nowrap';
+        label.style.pointerEvents = 'none';
+        
+        label.setAttribute('data-prize-id', prize.id);
+        label.setAttribute('data-prize-index', index);
+        
+        wheelElement.appendChild(label);
+        
+        console.log(`Segmento ${index}: ${prize.name} (${startAngle}° - ${endAngle}°)`);
     });
     
-    console.log('✅ Ruleta inicializada correctamente');
+    conicGradient += gradientStops.join(', ') + ')';
+    wheelElement.style.background = conicGradient;
+    
+    console.log('✅ Ruleta inicializada con conic-gradient');
 }
 
 async function spinWheel() {
