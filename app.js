@@ -321,15 +321,15 @@ function initWheel() {
 
 async function spinWheel() {
     if (isSpinning) return;
-    
+
     // Verificar si hay un premio pendiente (YetToReward)
     const pendingReward = participantGameRewards.find(pr => pr.status === 'YetToReward');
-    
+
     if (!pendingReward) {
         alert('No tienes oportunidades disponibles para jugar en este momento.');
         return;
     }
-    
+
     isSpinning = true;
     spinButton.disabled = true;
     spinButton.textContent = 'Girando...';
@@ -338,8 +338,8 @@ async function spinWheel() {
     try {
         console.log('🎲 Llamando a Salesforce para determinar el premio...');
         console.log('GameParticipantRewardId:', pendingReward.gameParticipantRewardId);
-        
-        // PASO 1: Llamar a Salesforce para que procese el premio
+
+        // === LLAMADA A SALESFORCE (procesa y devuelve el premio) ===
         const playResponse = await fetch(WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -350,27 +350,27 @@ async function spinWheel() {
                 }
             })
         });
-        
+
         const playResult = await playResponse.json();
-        
+
         if (!playResult.success) {
             throw new Error(playResult.error || 'Error al jugar');
         }
-        
+
         console.log('🎯 Salesforce determinó el premio:', playResult.data);
-        
-        // PASO 2: Encontrar el premio ganador
+
+        // PASO 2: Encontrar el premio ganador (puede ser string o número)
         const gameRewardId = playResult.data.gameRewardId;
         const gameRewardData = playResult.data;
-        
-        // Buscar el índice del premio en el array
-        const prizeIndex = wheelPrizes.findIndex(p => p.id === gameRewardId);
-        
+
+        // Buscar el índice del premio en wheelPrizes (comparación tolerante a tipo)
+        const prizeIndex = wheelPrizes.findIndex(p => p.id == gameRewardId);
+
         if (prizeIndex === -1) {
             console.error('❌ Premio no encontrado en la ruleta');
             console.error('GameRewardId buscado:', gameRewardId);
             console.error('IDs disponibles:', wheelPrizes.map(p => p.id));
-            throw new Error(`No se pudo encontrar el premio. ID: ${gameRewardId}`);
+            throw new Error(`No se pudo encontrar el premio en la ruleta. ID: ${gameRewardId}`);
         }
 
         console.log('\n=== PREMIO GANADOR ===');
@@ -381,121 +381,139 @@ async function spinWheel() {
         console.log('Índice en array:', prizeIndex);
         console.log('Nombre en array:', wheelPrizes[prizeIndex].name);
 
-        // PASO 3: CALCULAR ROTACIÓN CORRECTA
+        // === CÁLCULO DE ROTACIÓN ===
         const totalPrizes = wheelPrizes.length;
         const segmentAngle = 360 / totalPrizes;
-        
-        // La flecha (puntero) apunta hacia arriba = 0°
-        // Cada segmento empieza en: index * segmentAngle
-        // El centro del segmento está en: (index * segmentAngle) + (segmentAngle / 2)
-        
-        // Ángulo del inicio del segmento ganador
+
+        // Centro angular del segmento ganador
         const segmentStartAngle = prizeIndex * segmentAngle;
-        
-        // Ángulo del centro del segmento ganador
         const segmentCenterAngle = segmentStartAngle + (segmentAngle / 2);
-        
-        // Queremos que el CENTRO del segmento quede en la flecha (arriba = 0°)
-        // Por lo tanto, debemos rotar la ruleta de forma que:
-        // segmentCenterAngle quede en la posición 0° (arriba)
-        
-        // Número de vueltas completas para hacer emocionante
-        const spins = 5;
-        const totalSpinDegrees = spins * 360;
-        
-        // Rotación necesaria para alinear el segmento con la flecha
-        // Si el segmento está en 45°, necesitamos rotar -45° (o 315°)
-        // para llevarlo a 0° (arriba)
+
+        // Queremos que el centro del segmento quede en la flecha (0°)
         const rotationToAlign = 360 - segmentCenterAngle;
 
-        // FIX → compensar el desajuste del CSS
+        // Offset para corregir la representación visual de tus slices
         const visualOffset = segmentAngle / 2;
 
-        const finalRotation = totalSpinDegrees + rotationToAlign + visualOffset;
+        // Offset para corregir la orientación real de tus triángulos (según la imagen -> 180°)
+        const orientationOffset = 180;
+
+        // Vueltas completas para animación
+        const spins = 5;
+        const totalSpinDegrees = spins * 360;
+
+        // Rotación final
+        const finalRotation = totalSpinDegrees + rotationToAlign + visualOffset + orientationOffset;
 
         console.log('\n📐 CÁLCULOS DE ROTACIÓN:');
         console.log('├─ Segmentos totales:', totalPrizes);
         console.log('├─ Ángulo por segmento:', segmentAngle + '°');
         console.log('├─ Índice del premio:', prizeIndex);
-        console.log('├─ Inicio del segmento:', segmentStartAngle + '°');
         console.log('├─ Centro del segmento:', segmentCenterAngle + '°');
-        console.log('├─ Vueltas completas:', spins);
-        console.log('├─ Grados de vueltas:', totalSpinDegrees + '°');
         console.log('├─ Rotación para alinear:', rotationToAlign + '°');
+        console.log('├─ visualOffset (compensación):', visualOffset + '°');
+        console.log('├─ orientationOffset:', orientationOffset + '°');
         console.log('└─ Rotación FINAL:', finalRotation + '°');
 
-        // PASO 4: ANIMAR LA RULETA
-        wheelElement.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.29, 0.98)';
+        // === ANIMAR LA RULETA ===
+        // Usamos transitionend para detectar fin de animación
+        wheelElement.style.transition = 'transform 4.5s cubic-bezier(0.17, 0.67, 0.29, 0.98)';
         wheelElement.style.transform = `rotate(${finalRotation}deg)`;
 
-        console.log('\n🎬 Iniciando animación...');
+        console.log('🎬 Iniciando animación...');
 
-        // PASO 5: Esperar a que termine la animación
-        await new Promise(resolve => setTimeout(resolve, 4100));
+        // Esperar transitionend (con fallback timeout)
+        await new Promise((resolve) => {
+            let finished = false;
+
+            const onEnd = () => {
+                if (finished) return;
+                finished = true;
+                resolve();
+            };
+
+            wheelElement.addEventListener('transitionend', onEnd, { once: true });
+
+            // Fallback por si no se lanza transitionend
+            setTimeout(() => {
+                if (!finished) onEnd();
+            }, 4800);
+        });
 
         console.log('✅ Animación completada');
 
-        // PASO 6: Mostrar resultado
+        // Normalizar rotación para evitar acumulación de grados
+        const normalizedRotation = finalRotation % 360;
+        wheelElement.style.transition = 'none';
+        wheelElement.style.transform = `rotate(${normalizedRotation}deg)`;
+
+        // === MOSTRAR RESULTADO AL USUARIO ===
         let prizeMessage = '';
         let detailMessage = '';
-        
+
         if (gameRewardData.rewardType === 'LoyaltyPoints') {
             const points = gameRewardData.rewardValue || 0;
             prizeMessage = `🎉 ¡Has ganado ${points.toLocaleString()} puntos! 🎉`;
             detailMessage = `Los puntos han sido acreditados a tu cuenta automáticamente.`;
-            
+
             if (gameRewardData.issuedRewardReference) {
                 detailMessage += `\n\nID de transacción: ${gameRewardData.issuedRewardReference}`;
             }
-            
+
         } else if (gameRewardData.rewardType === 'Voucher') {
             prizeMessage = `🎁 ¡Has ganado: ${gameRewardData.rewardName}! 🎁`;
             detailMessage = `El voucher ha sido emitido y está disponible en tu perfil.`;
-            
+
             if (gameRewardData.issuedRewardReference) {
                 detailMessage += `\n\nID del voucher: ${gameRewardData.issuedRewardReference}`;
             }
-            
-        } else if (gameRewardData.rewardType === 'NoReward') {
+
+        } else if (gameRewardData.rewardType === 'NoReward' || gameRewardData.rewardType === 'No Prize' ) {
             prizeMessage = `${gameRewardData.rewardName} 😔`;
             detailMessage = '¡Sigue intentando!';
+        } else {
+            // Fallback para tipos desconocidos
+            prizeMessage = `🎉 ¡Has ganado: ${gameRewardData.rewardName || 'un premio'}! 🎉`;
+            detailMessage = '';
         }
 
         wheelPrizeText.textContent = prizeMessage;
         resultDiv.classList.add('show');
 
-        console.log('\n=== PREMIO ENTREGADO ===');
-        console.log('IssuedRewardReference:', gameRewardData.issuedRewardReference);
-
-        // PASO 7: Actualizar estado local
+        // === ACTUALIZAR ESTADO LOCAL del participante ===
         const rewardIndex = participantGameRewards.findIndex(
             pr => pr.gameParticipantRewardId === pendingReward.gameParticipantRewardId
         );
-        
+
         if (rewardIndex !== -1) {
             participantGameRewards[rewardIndex].status = 'Rewarded';
             participantGameRewards[rewardIndex].gameRewardId = gameRewardId;
             participantGameRewards[rewardIndex].issuedRewardReference = gameRewardData.issuedRewardReference;
         }
 
-        // PASO 8: Mostrar mensaje al usuario
+        console.log('\n=== PREMIO ENTREGADO ===');
+        console.log('IssuedRewardReference:', gameRewardData.issuedRewardReference);
+
+        // Mensaje/alert y reset
         setTimeout(() => {
             alert(prizeMessage + '\n\n' + detailMessage + '\n\n¡Revisa tu perfil para ver tus puntos actualizados!');
-            
+
             setTimeout(() => {
                 resetWheel();
-            }, 2000);
-        }, 500);
+            }, 1000);
+        }, 400);
 
     } catch (error) {
         console.error('❌ Error en spinWheel:', error);
-        alert('Error: ' + error.message);
-        
+        alert('Error: ' + (error.message || error));
+
+        // Restaurar estado UI
         spinButton.disabled = false;
         spinButton.textContent = '🎰 Girar Ruleta';
         isSpinning = false;
     }
 }
+
 
 async function startWheel() {
     const membershipNumber = wheelMembershipInput.value.trim();
