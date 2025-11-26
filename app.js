@@ -313,7 +313,7 @@ function initWheel() {
         // Calcular posición del texto (MÁS CERCA DEL CENTRO)
         const centerAngle = startAngle + (segmentAngle / 2);
         const centerRad = (centerAngle - 90) * Math.PI / 180; // -90 para que 0° esté arriba
-        const radius = 35; // REDUCIDO de 50 a 35 (más cerca del centro)
+        const radius = 40; // REDUCIDO de 50 a 35 (más cerca del centro)
         
         const x = 50 + radius * Math.cos(centerRad);
         const y = 50 + radius * Math.sin(centerRad);
@@ -327,7 +327,7 @@ function initWheel() {
         label.style.transform = `translate(-50%, -50%) rotate(${textRotation}deg)`;
         
         label.style.color = 'white';
-        label.style.fontSize = '9px';
+        label.style.fontSize = '10px';
         label.style.fontWeight = 'bold';
         label.style.textShadow = '1px 1px 3px rgba(0,0,0,0.9)';
         label.style.whiteSpace = 'nowrap';
