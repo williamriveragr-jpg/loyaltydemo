@@ -1,741 +1,987 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f5f5f5;
-    min-height: 100vh;
-}
-
-/* ============================================
-   BARRA DE NAVEGACIÓN
-   ============================================ */
-.navbar {
-    background: linear-gradient(135deg, #2D4FD7 0%, #764ba2 100%);
-    padding: 0;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-}
-
-.nav-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 20px;
-}
-
-.nav-logo {
-    color: white;
-    font-size: 24px;
-    font-weight: bold;
-    padding: 20px 0;
-    text-decoration: none;
-}
-
-.nav-menu {
-    display: flex;
-    list-style: none;
-    gap: 0;
-}
-
-.nav-item {
-    position: relative;
-}
-
-.nav-link {
-    color: white;
-    text-decoration: none;
-    padding: 25px 25px;
-    display: block;
-    font-weight: 500;
-    transition: background 0.3s;
-    border-bottom: 3px solid transparent;
-}
-
-.nav-link:hover,
-.nav-link.active {
-    background: rgba(255,255,255,0.1);
-    border-bottom-color: white;
-}
-
-/* Hamburger menu para móvil */
-.nav-toggle {
-    display: none;
-    flex-direction: column;
-    cursor: pointer;
-    padding: 10px;
-}
-
-.nav-toggle span {
-    width: 25px;
-    height: 3px;
-    background: white;
-    margin: 3px 0;
-    transition: 0.3s;
-}
-
-/* ============================================
-   CONTENEDOR PRINCIPAL
-   ============================================ */
-.main-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 40px 20px;
-}
-
-.section {
-    display: none;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-    padding: 40px;
-    animation: fadeIn 0.5s;
-}
-
-.section.active {
-    display: block;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-h1 {
-    color: #333;
-    margin-bottom: 10px;
-    font-size: 32px;
-}
-
-.subtitle {
-    color: #666;
-    margin-bottom: 30px;
-    font-size: 16px;
-}
-
-/* ============================================
-   HOME SECTION
-   ============================================ */
-.hero {
-    text-align: center;
-    padding: 60px 20px;
-}
-
-.hero h1 {
-    font-size: 48px;
-    margin-bottom: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.hero p {
-    font-size: 20px;
-    color: #666;
-    margin-bottom: 40px;
-}
-
-.benefits-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 30px;
-    margin-top: 50px;
-}
-
-.benefit-card {
-    text-align: center;
-    padding: 30px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-    transition: transform 0.3s;
-}
-
-.benefit-card:hover {
-    transform: translateY(-10px);
-}
-
-.benefit-icon {
-    font-size: 48px;
-    margin-bottom: 20px;
-}
-
-.benefit-card h3 {
-    color: #333;
-    margin-bottom: 10px;
-}
-
-.benefit-card p {
-    color: #666;
-    font-size: 14px;
-}
-
-/* ============================================
-   FORMULARIO (ALTA)
-   ============================================ */
-.form-group {
-    margin-bottom: 20px;
-}
-
-label {
-    display: block;
-    color: #333;
-    font-weight: 600;
-    margin-bottom: 8px;
-    font-size: 14px;
-}
-
-.required {
-    color: #e74c3c;
-}
-
-input, select, textarea {
-    width: 100%;
-    padding: 12px;
-    border: 2px solid #e0e0e0;
-    border-radius: 5px;
-    font-size: 14px;
-    transition: border-color 0.3s;
-    font-family: inherit;
-}
-
-input:focus, select:focus, textarea:focus {
-    outline: none;
-    border-color: #667eea;
-}
-
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.btn {
-    padding: 14px 30px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: transform 0.2s;
-}
-
-.btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-}
-
-.btn:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-    transform: none;
-}
-
-.btn-secondary {
-    background: #6c757d;
-    margin-left: 10px;
-}
-
-.btn-secondary:hover {
-    box-shadow: 0 5px 20px rgba(108, 117, 125, 0.4);
-}
-
-/* ============================================
-   COMPRAR (PRODUCTOS)
-   ============================================ */
-.products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 30px;
-    margin-top: 30px;
-}
-
-.product-card {
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-}
-
-.product-image {
-    width: 100%;
-    height: 200px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 64px;
-    color: white;
-}
-
-.product-info {
-    padding: 20px;
-}
-
-.product-title {
-    font-size: 18px;
-    font-weight: 600;
-    color: #333;
-    margin-bottom: 10px;
-}
-
-.product-description {
-    color: #666;
-    font-size: 14px;
-    margin-bottom: 15px;
-    line-height: 1.5;
-}
-
-.product-price {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.price {
-    font-size: 24px;
-    font-weight: bold;
-    color: #667eea;
-}
-
-.points {
-    font-size: 14px;
-    color: #764ba2;
-    font-weight: 600;
-}
-
-/* ============================================
-   CONSULTAR PERFIL
-   ============================================ */
-.profile-search {
-    margin-bottom: 30px;
-    display: flex;
-    gap: 10px;
-}
-
-.profile-search input {
-    flex: 1;
-}
-
-.profile-card {
-    display: none;
-    border: 2px solid #e0e0e0;
-    border-radius: 10px;
-    padding: 30px;
-    margin-top: 30px;
-}
-
-.profile-card.show {
-    display: block;
-    animation: fadeIn 0.5s;
-}
-
-.profile-header {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
-    border-bottom: 2px solid #e0e0e0;
-}
-
-.profile-avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 32px;
-    font-weight: bold;
-}
-
-.profile-name {
-    flex: 1;
-}
-
-.profile-name h2 {
-    color: #333;
-    margin-bottom: 5px;
-}
-
-.profile-tier {
-    display: inline-block;
-    padding: 5px 15px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.profile-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.stat-card {
-    text-align: center;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 10px;
-}
-
-.stat-value {
-    font-size: 32px;
-    font-weight: bold;
-    color: #667eea;
-    margin-bottom: 5px;
-}
-
-.stat-label {
-    color: #666;
-    font-size: 14px;
-}
-
-.profile-details {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.detail-item {
-    padding: 15px;
-    background: #f8f9fa;
-    border-radius: 5px;
-}
-
-.detail-label {
-    font-size: 12px;
-    color: #666;
-    text-transform: uppercase;
-    margin-bottom: 5px;
-}
-
-.detail-value {
-    font-size: 16px;
-    color: #333;
-    font-weight: 600;
-}
-
-/* Animación para tarjetas de moneda */
-.currency-card {
-    animation: slideIn 0.5s ease-out forwards;
-    opacity: 0;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
+// ============================================
+// CONFIGURACIÓN (DECLARAR PRIMERO)
+// ============================================
+const WORKER_URL = 'https://young-snowflake-1f82.williamriveragr.workers.dev';
+const PROGRAM_ID = '0lpd20000001aO1AAI';
+
+// Estado del juego
+let currentMember = {};
+let isSpinning = false;
+
+// Premios de la ruleta (se cargarán dinámicamente)
+let wheelPrizes = [];
+let participantGameRewards = [];
+
+
+// ============================================
+// REFERENCIAS AL DOM (DECLARAR AL INICIO)
+// ============================================
+const form = document.getElementById('loyaltyForm');
+const submitBtn = document.getElementById('submitBtn');
+const loading = document.getElementById('loading');
+const messageDiv = document.getElementById('message');
+
+// Referencias para la ruleta
+const wheelLoginDiv = document.getElementById('wheelLogin');
+const wheelGameDiv = document.getElementById('wheelGame');
+const wheelMembershipInput = document.getElementById('wheelMembershipNumber');
+const loginLoading = document.getElementById('wheelLoginLoading');
+const loginMessage = document.getElementById('wheelLoginMessage');
+const spinButton = document.getElementById('spinButton');
+const wheelElement = document.getElementById('wheel');
+const resultDiv = document.getElementById('wheelResult');
+const wheelPrizeText = document.getElementById('wheelPrize');
+
+// ============================================
+// NAVEGACIÓN
+// ============================================
+function showSection(sectionId) {
+    document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    document.getElementById(sectionId).classList.add('active');
+    
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+        if (link.dataset.section === sectionId) {
+            link.classList.add('active');
+        }
+    });
+    
+    document.getElementById('navMenu').classList.remove('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('navToggle').addEventListener('click', () => {
+        document.getElementById('navMenu').classList.toggle('active');
+    });
+
+    // ============================================
+    // FORMULARIO DE REGISTRO
+    // ============================================
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (!form.checkValidity()) {
+            showMessage('Por favor, complete todos los campos requeridos', 'error');
+            return;
+        }
+    
+        const membershipNumber = generateMembershipNumber();
+        
+        const formData = {
+            firstName: document.getElementById('firstName').value.trim(),
+            lastName: document.getElementById('lastName').value.trim(),
+            email: document.getElementById('email').value.trim(),
+            phone: document.getElementById('phone').value.trim(),
+            birthDate: document.getElementById('birthDate').value,
+            programId: PROGRAM_ID,
+            enrollmentChannel: document.getElementById('enrollmentChannel').value
+        };
+    
+        document.getElementById('membershipNumber').value = membershipNumber;
+        
+        submitBtn.disabled = true;
+        loading.classList.add('show');
+        messageDiv.classList.remove('show');
+    
+        try {
+            const response = await fetch(WORKER_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    operation: "createMember",
+                    data: formData
+                })
+            });
+    
+            const result = await response.json();
+            
+            if (result.success) {
+                showMessage(`¡Registro exitoso! Número de membresía: ${result.data.membershipNumber}`, 'success');
+                
+                setTimeout(() => {
+                    form.reset();
+                    showSection('home');
+                }, 3000);
+            } else {
+                showMessage('Error al registrar: ' + result.error, 'error');
+            }
+            
+        } catch (error) {
+            console.error('Error:', error);
+            showMessage('Error al registrar: ' + error.message, 'error');
+        } finally {
+            submitBtn.disabled = false;
+            loading.classList.remove('show');
+        }
+    });
+});
+
+// ============================================
+// BÚSQUEDA DE PERFIL
+// ============================================
+async function searchProfile() {
+    const searchInput = document.getElementById('searchInput').value.trim();
+    const loadingProfile = document.getElementById('loadingProfile');
+    const profileMessage = document.getElementById('profileMessage');
+    const profileCard = document.getElementById('profileCard');
+    
+    if (!searchInput) {
+        showProfileMessage('Por favor, ingresa un número de membresía', 'error');
+        return;
     }
-    to {
-        opacity: 1;
-        transform: translateY(0);
+    
+    loadingProfile.classList.add('show');
+    profileMessage.classList.remove('show');
+    profileCard.classList.remove('show');
+    
+    try {
+        const response = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                operation: "getMember",
+                data: { membershipNumber: searchInput }
+            })
+        });
+
+        const result = await response.json();
+        
+        if (!result.success) {
+            showProfileMessage(result.error || 'Perfil no encontrado.', 'error');
+            return;
+        }
+        
+        displayProfile(result.data);
+        profileCard.classList.add('show');
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showProfileMessage('Error al buscar perfil.', 'error');
+    } finally {
+        loadingProfile.classList.remove('show');
     }
 }
 
-/* Colores alternativos para cada moneda */
-.currency-card:nth-child(1) .stat-value {
-    color: #667eea;
+function displayProfile(profile) {
+    const initials = (profile.contact.firstName.charAt(0) + profile.contact.lastName.charAt(0)).toUpperCase();
+    document.getElementById('profileAvatar').textContent = initials;
+    document.getElementById('profileName').textContent = `${profile.contact.firstName} ${profile.contact.lastName}`;
+    document.getElementById('profileTier').textContent = profile.tier;
+    document.getElementById('totalPoints').textContent = profile.points.total.toLocaleString();
+    document.getElementById('memberSince').textContent = profile.memberSince;
+    document.getElementById('profileEmail').textContent = profile.contact.email;
+    document.getElementById('profilePhone').textContent = profile.contact.phone;
+    document.getElementById('profileMembership').textContent = profile.membershipNumber;
+    document.getElementById('profileChannel').textContent = profile.enrollmentChannel;
+    
+    const enrollmentDate = new Date(profile.enrollmentDate);
+    document.getElementById('profileEnrollmentDate').textContent = enrollmentDate.toLocaleDateString('es-ES');
+    document.getElementById('profileStatus').textContent = profile.status === 'Active' ? 'Activo' : profile.status;
+    
+    displayCurrencies(profile.points.currencies);
 }
 
-.currency-card:nth-child(2) .stat-value {
-    color: #764ba2;
+function displayCurrencies(currencies) {
+    const profileStats = document.querySelector('.profile-stats');
+    const existingCurrencyCards = profileStats.querySelectorAll('.currency-card');
+    existingCurrencyCards.forEach(card => card.remove());
+    
+    const availableCard = document.getElementById('availablePoints')?.closest('.stat-card');
+    const tierCard = document.getElementById('tierPoints')?.closest('.stat-card');
+    if (availableCard) availableCard.remove();
+    if (tierCard) tierCard.remove();
+    
+    currencies.forEach((currency, index) => {
+        const card = document.createElement('div');
+        card.className = 'stat-card currency-card';
+        card.style.animationDelay = `${index * 0.1}s`;
+        card.innerHTML = `
+            <div class="stat-value">${currency.balance.toLocaleString()}</div>
+            <div class="stat-label">${currency.name}</div>
+        `;
+        
+        const memberSinceCard = document.getElementById('memberSince').closest('.stat-card');
+        profileStats.insertBefore(card, memberSinceCard);
+    });
 }
 
-.currency-card:nth-child(3) .stat-value {
-    color: #f093fb;
-}
+// ============================================
+// SPIN THE WHEEL
+// ============================================
+async function loadGamePrizes(gameName) {
+    try {
+        const response = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                operation: "getGames",
+                data: { 
+                    gameName: gameName,
+                    membershipNumber: wheelMembershipInput.value.trim()
+                }
+            })
+        });
 
-.currency-card:nth-child(4) .stat-value {
-    color: #4facfe;
-}
-
-/* ============================================
-   SPIN THE WHEEL
-   ============================================ */
-.wheel-container {
-    text-align: center;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.wheel-login {
-    max-width: 400px;
-    margin: 50px auto;
-}
-
-.wheel-game {
-    display: none;
-}
-
-.wheel-game.active {
-    display: block;
-}
-
-.wheel-wrapper {
-    position: relative;
-    width: 400px;
-    height: 400px;
-    margin: 40px auto;
-}
-
-.wheel {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    border: 10px solid #667eea;
-    position: relative;
-    overflow: visible; /* CAMBIAR de hidden a visible */
-    transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-}
-
-.wheel-segment {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    clip-path: polygon(50% 50%, 50% 0%, 100% 0%); /* Forma base del triángulo */
-    transform-origin: 50% 50%; /* Centro de la ruleta */
-}
-
-.wheel-segment span {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    top: 25%; /* Ajustar según necesidad */
-    left: 60%;
-    transform: rotate(0deg); /* Se ajustará dinámicamente */
-    color: white;
-    font-weight: bold;
-    font-size: 13px;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
-    white-space: nowrap;
-    pointer-events: none;
-}
-
-.wheel-pointer {
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 0;
-    height: 0;
-    border-left: 20px solid transparent;
-    border-right: 20px solid transparent;
-    border-top: 40px solid #e74c3c;
-    z-index: 10;
-    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
-}
-
-.wheel-center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 50%;
-    border: 5px solid white;
-    z-index: 5;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
-
-.spin-button {
-    margin-top: 30px;
-    padding: 20px 50px;
-    font-size: 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s;
-    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
-}
-
-.spin-button:hover:not(:disabled) {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 30px rgba(102, 126, 234, 0.6);
-}
-
-.spin-button:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-    transform: none;
-}
-
-.wheel-result {
-    margin-top: 30px;
-    padding: 20px;
-    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-    border-radius: 10px;
-    display: none;
-}
-
-.wheel-result.show {
-    display: block;
-    animation: fadeIn 0.5s;
-}
-
-.wheel-result h3 {
-    color: #155724;
-    margin-bottom: 10px;
-}
-
-.wheel-result p {
-    color: #155724;
-    font-size: 18px;
-    font-weight: 600;
-}
-
-.wheel-info {
-    background: #e3f2fd;
-    padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 30px;
-}
-
-.wheel-info h3 {
-    color: #1976d2;
-    margin-bottom: 10px;
-}
-
-.wheel-info ul {
-    list-style: none;
-    padding-left: 0;
-}
-
-.wheel-info li {
-    color: #1976d2;
-    padding: 5px 0;
-    padding-left: 25px;
-    position: relative;
-}
-
-.wheel-info li:before {
-    content: "🎁";
-    position: absolute;
-    left: 0;
-}
-
-/* ============================================
-   MENSAJES Y LOADING
-   ============================================ */
-.message {
-    margin-top: 20px;
-    padding: 12px;
-    border-radius: 5px;
-    display: none;
-}
-
-.message.success {
-    background: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.message.error {
-    background: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-.message.show {
-    display: block;
-    animation: fadeIn 0.5s;
-}
-
-.loading {
-    display: none;
-    text-align: center;
-    margin-top: 20px;
-}
-
-.loading.show {
-    display: block;
-}
-
-.spinner {
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #667eea;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 10px;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* ============================================
-   RESPONSIVE
-   ============================================ */
-@media (max-width: 768px) {
-    .nav-menu {
-        display: none;
-        flex-direction: column;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        width: 100%;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        const result = await response.json();
+        
+        if (result.success) {
+            // SEPARAR: Premios del juego (gameRewards)
+            wheelPrizes = result.data.gameRewards.map(reward => ({
+                id: reward.gameRewardId,
+                name: reward.name,
+                value: reward.rewardValue || 0,
+                color: reward.color,
+                rewardType: reward.rewardType,
+                description: reward.description,
+                imageUrl: reward.imageUrl
+            }));
+            
+            // SEPARAR: Premios del participante (participantGameRewards)
+            participantGameRewards = result.data.participantGameRewards;
+            
+            console.log('=== INFORMACIÓN DEL JUEGO ===');
+            console.log('Premios del juego:', wheelPrizes);
+            console.log('Premios del participante:', participantGameRewards);
+            console.log('Puede jugar:', result.data.canPlay);
+            
+            // IMPORTANTE: Verificar si ya existe un premio ganador de Salesforce
+            const rewardedPrize = participantGameRewards.find(pr => pr.status === 'Rewarded' && pr.gameRewardId);
+            
+            if (rewardedPrize) {
+                // Salesforce ya determinó el premio ganador
+                console.log('⚠️ Premio ya determinado por Salesforce:', rewardedPrize.gameRewardId);
+                currentMember.winningPrizeId = rewardedPrize.gameRewardId;
+                currentMember.gameParticipantRewardId = rewardedPrize.gameParticipantRewardId;
+                
+                // Solo animar la ruleta
+            } else {
+                // Verificar si puede jugar
+                const pendingReward = participantGameRewards.find(pr => pr.status === 'YetToReward');
+                
+                if (!pendingReward) {
+                    alert('No tienes oportunidades disponibles para este juego.');
+                    return false;
+                }
+                
+                currentMember.gameParticipantRewardId = pendingReward.gameParticipantRewardId;
+                console.log('Game Participant Reward ID:', currentMember.gameParticipantRewardId);
+            }
+            
+            return true;
+        } else {
+            console.error('Error cargando premios:', result.error);
+            alert('Error: ' + result.error);
+            return false;
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al cargar los premios del juego');
+        return false;
     }
+}
 
-    .nav-menu.active {
-        display: flex;
-    }
+function initWheel() {
+    wheelElement.innerHTML = '';
+    const totalPrizes = wheelPrizes.length;
+    const segmentAngle = 360 / totalPrizes;
+    
+    console.log('🎨 Inicializando ruleta:');
+    console.log('Total de premios:', totalPrizes);
+    console.log('Ángulo por segmento:', segmentAngle + '°');
+    
+    // Crear gradiente cónico dinámico
+    let conicGradient = 'conic-gradient(from 0deg, ';
+    let gradientStops = [];
+    
+    wheelPrizes.forEach((prize, index) => {
+        const startAngle = index * segmentAngle;
+        const endAngle = (index + 1) * segmentAngle;
+        const color = prize.color || '#667eea';
+        
+        gradientStops.push(`${color} ${startAngle}deg ${endAngle}deg`);
+        
+        // Crear etiqueta de texto
+        const label = document.createElement('div');
+        label.className = 'wheel-label';
+        label.textContent = prize.name;
+        
+        // Calcular posición del texto (en el centro del segmento)
+        const centerAngle = startAngle + (segmentAngle / 2);
+        const centerRad = (centerAngle - 90) * Math.PI / 180; // -90 para que 0° esté arriba
+        const radius = 60; // Porcentaje desde el centro
+        
+        const x = 50 + radius * Math.cos(centerRad);
+        const y = 50 + radius * Math.sin(centerRad);
+        
+        label.style.position = 'absolute';
+        label.style.left = `${x}%`;
+        label.style.top = `${y}%`;
+        label.style.transform = `translate(-50%, -50%) rotate(${centerAngle}deg)`;
+        label.style.color = 'white';
+        label.style.fontSize = '13px';
+        label.style.fontWeight = 'bold';
+        label.style.textShadow = '1px 1px 3px rgba(0,0,0,0.8)';
+        label.style.whiteSpace = 'nowrap';
+        label.style.pointerEvents = 'none';
+        
+        label.setAttribute('data-prize-id', prize.id);
+        label.setAttribute('data-prize-index', index);
+        
+        wheelElement.appendChild(label);
+        
+        console.log(`Segmento ${index}: ${prize.name} (${startAngle}° - ${endAngle}°)`);
+    });
+    
+    conicGradient += gradientStops.join(', ') + ')';
+    wheelElement.style.background = conicGradient;
+    
+    console.log('✅ Ruleta inicializada con conic-gradient');
+}
 
-    .nav-toggle {
-        display: flex;
+async function spinWheel() {
+    if (isSpinning) return;
+    
+    // Verificar si hay un premio pendiente
+    const pendingReward = participantGameRewards.find(pr => pr.status === 'YetToReward');
+    
+    if (!pendingReward) {
+        alert('No tienes oportunidades disponibles para jugar en este momento.');
+        return;
     }
+    
+    isSpinning = true;
+    spinButton.disabled = true;
+    spinButton.textContent = 'Girando...';
+    resultDiv.classList.remove('show');
 
-    .form-row,
-    .profile-details {
-        grid-template-columns: 1fr;
-    }
+    try {
+        console.log('🎲 Llamando a Salesforce...');
+        console.log('GameParticipantRewardId:', pendingReward.gameParticipantRewardId);
+        
+        // PASO 1: Llamar a Salesforce para determinar el premio
+        const playResponse = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                operation: "recordGameReward",
+                data: {
+                    gameParticipantRewardId: pendingReward.gameParticipantRewardId
+                }
+            })
+        });
+        
+        const playResult = await playResponse.json();
+        
+        if (!playResult.success) {
+            throw new Error(playResult.error || 'Error al jugar');
+        }
+        
+        console.log('🎯 Salesforce determinó el premio:', playResult.data);
+        
+        // PASO 2: Buscar el índice del premio ganador
+        const gameRewardId = playResult.data.gameRewardId;
+        const gameRewardData = playResult.data;
+        
+        const prizeIndex = wheelPrizes.findIndex(p => p.id === gameRewardId);
+        
+        if (prizeIndex === -1) {
+            console.error('❌ Premio no encontrado');
+            console.error('GameRewardId buscado:', gameRewardId);
+            console.error('IDs disponibles:', wheelPrizes.map(p => `${p.name}: ${p.id}`));
+            throw new Error(`Premio no encontrado: ${gameRewardId}`);
+        }
 
-    .hero h1 {
-        font-size: 32px;
-    }
+        console.log('\n=== PREMIO GANADOR ===');
+        console.log('Game Reward ID:', gameRewardId);
+        console.log('Nombre:', gameRewardData.rewardName);
+        console.log('Índice en ruleta:', prizeIndex);
+        console.log('Nombre en ruleta:', wheelPrizes[prizeIndex].name);
 
-    .section {
-        padding: 20px;
-    }
+        // PASO 3: CALCULAR ROTACIÓN
+        const totalPrizes = wheelPrizes.length;
+        const segmentAngle = 360 / totalPrizes;
+        
+        // Calcular el ángulo del centro del segmento ganador
+        const segmentCenterAngle = (prizeIndex * segmentAngle) + (segmentAngle / 2);
+        
+        // Número de vueltas completas
+        const spins = 5;
+        
+        // Rotación final: 
+        // - Dar 5 vueltas completas (spins * 360)
+        // - Ajustar para que el centro del segmento quede arriba (360 - segmentCenterAngle)
+        const finalRotation = (spins * 360) + (360 - segmentCenterAngle);
 
-    .wheel-wrapper {
-        width: 300px;
-        height: 300px;
-    }
+        console.log('\n📐 CÁLCULOS:');
+        console.log('├─ Ángulo por segmento:', segmentAngle + '°');
+        console.log('├─ Centro del segmento ganador:', segmentCenterAngle + '°');
+        console.log('├─ Vueltas completas:', spins);
+        console.log('└─ Rotación FINAL:', finalRotation + '°');
 
-    .wheel-center {
-        width: 60px;
-        height: 60px;
+        // PASO 4: ANIMAR
+        wheelElement.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.29, 0.98)';
+        wheelElement.style.transform = `rotate(${finalRotation}deg)`;
+
+        console.log('🎬 Animación iniciada...');
+
+        // PASO 5: Esperar fin de animación
+        await new Promise(resolve => setTimeout(resolve, 4100));
+
+        console.log('✅ Animación completada');
+
+        // PASO 6: Mostrar resultado
+        let prizeMessage = '';
+        let detailMessage = '';
+        
+        if (gameRewardData.rewardType === 'LoyaltyPoints') {
+            const points = gameRewardData.rewardValue || 0;
+            prizeMessage = `🎉 ¡Has ganado ${points.toLocaleString()} puntos! 🎉`;
+            detailMessage = `Los puntos han sido acreditados automáticamente.`;
+            if (gameRewardData.issuedRewardReference) {
+                detailMessage += `\n\nID: ${gameRewardData.issuedRewardReference}`;
+            }
+        } else if (gameRewardData.rewardType === 'Voucher') {
+            prizeMessage = `🎁 ¡Has ganado: ${gameRewardData.rewardName}! 🎁`;
+            detailMessage = `El voucher está disponible en tu perfil.`;
+            if (gameRewardData.issuedRewardReference) {
+                detailMessage += `\n\nID: ${gameRewardData.issuedRewardReference}`;
+            }
+        } else {
+            prizeMessage = `${gameRewardData.rewardName} 😔`;
+            detailMessage = '¡Sigue intentando!';
+        }
+
+        wheelPrizeText.textContent = prizeMessage;
+        resultDiv.classList.add('show');
+
+        // Actualizar estado local
+        const rewardIndex = participantGameRewards.findIndex(
+            pr => pr.gameParticipantRewardId === pendingReward.gameParticipantRewardId
+        );
+        
+        if (rewardIndex !== -1) {
+            participantGameRewards[rewardIndex].status = 'Rewarded';
+            participantGameRewards[rewardIndex].gameRewardId = gameRewardId;
+            participantGameRewards[rewardIndex].issuedRewardReference = gameRewardData.issuedRewardReference;
+        }
+
+        setTimeout(() => {
+            alert(prizeMessage + '\n\n' + detailMessage);
+            setTimeout(() => resetWheel(), 2000);
+        }, 500);
+
+    } catch (error) {
+        console.error('❌ Error:', error);
+        alert('Error: ' + error.message);
+        spinButton.disabled = false;
+        spinButton.textContent = '🎰 Girar Ruleta';
+        isSpinning = false;
     }
+}
+
+
+async function startWheel() {
+    const membershipNumber = wheelMembershipInput.value.trim();
+    
+    if (!membershipNumber) {
+        showWheelLoginMessage('Por favor, ingresa tu número de membresía', 'error');
+        return;
+    }
+    
+    loginLoading.classList.add('show');
+    loginMessage.classList.remove('show');
+    
+    try {
+        // Verificar que el miembro existe
+        const memberResponse = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                operation: "getMember",
+                data: { membershipNumber }
+            })
+        });
+
+        const memberResult = await memberResponse.json();
+        
+        if (!memberResult.success) {
+            showWheelLoginMessage('Miembro no encontrado. Verifica tu número.', 'error');
+            loginLoading.classList.remove('show');
+            return;
+        }
+        
+        currentMember = memberResult.data;
+        
+        // Cargar los premios del juego
+        const prizesLoaded = await loadGamePrizes('Super Spin Rewards');
+        
+        if (!prizesLoaded) {
+            showWheelLoginMessage('Error al cargar los premios del juego', 'error');
+            loginLoading.classList.remove('show');
+            return;
+        }
+        
+        // Verificar si puede jugar
+        const canPlay = participantGameRewards.some(pr => pr.status === 'YetToReward');
+        
+        if (!canPlay) {
+            showWheelLoginMessage('No tienes oportunidades disponibles para este juego.', 'error');
+            loginLoading.classList.remove('show');
+            return;
+        }
+        
+        // Mostrar el juego
+        wheelLoginDiv.style.display = 'none';
+        wheelGameDiv.classList.add('active');
+        initWheel();
+        
+        console.log('✅ Juego cargado correctamente');
+        console.log('Premios disponibles:', wheelPrizes.length);
+        console.log('Oportunidades pendientes:', participantGameRewards.filter(pr => pr.status === 'YetToReward').length);
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showWheelLoginMessage('Error al verificar membresía.', 'error');
+    } finally {
+        loginLoading.classList.remove('show');
+    }
+}
+
+function resetWheel() {
+    // Resetear interfaz
+    spinButton.disabled = false;
+    spinButton.textContent = '🎰 Girar Ruleta';
+    isSpinning = false;
+    resultDiv.classList.remove('show');
+    
+    // Resetear rotación de la ruleta
+    wheelElement.style.transition = 'none';
+    wheelElement.style.transform = 'rotate(0deg)';
+    
+    // Forzar reflow
+    void wheelElement.offsetHeight;
+    
+    // Volver al login
+    setTimeout(() => {
+        wheelGameDiv.classList.remove('active');
+        wheelLoginDiv.style.display = 'block';
+        wheelMembershipInput.value = '';
+        wheelElement.innerHTML = '';
+        currentMember = null;
+        wheelPrizes = [];
+        participantGameRewards = [];
+    }, 100);
+}
+function selectPrizeByProbability() {
+    const availablePrizes = wheelPrizes.filter(prize => prize.isAvailable);
+    
+    if (availablePrizes.length === 0) {
+        return wheelPrizes.find(p => p.rewardType === 'NoReward') || wheelPrizes[0];
+    }
+    
+    const totalProbability = availablePrizes.reduce((sum, prize) => sum + prize.winProbability, 0);
+    let random = Math.random() * totalProbability;
+    let cumulativeProbability = 0;
+    
+    for (const prize of availablePrizes) {
+        cumulativeProbability += prize.winProbability;
+        
+        if (random <= cumulativeProbability) {
+            return prize;
+        }
+    }
+    
+    return availablePrizes[availablePrizes.length - 1];
+}
+
+async function createTransaction(memberId, amount, productName, rewardDefinitionId) {
+    const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            operation: "createTransaction",
+            data: {
+                memberId: memberId,
+                amount: amount,
+                transactionType: "Accrual",
+                journalType: "Accrual",
+                journalSubType: "Gamification",
+                productName: productName,
+                rewardDefinitionId: rewardDefinitionId
+            }
+        })
+    });
+    return await response.json();
+}
+
+async function createVoucher(memberId, voucherDefinitionId, voucherName) {
+    const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            operation: "createVoucher",
+            data: {
+                memberId: memberId,
+                voucherDefinitionId: voucherDefinitionId,
+                voucherName: voucherName
+            }
+        })
+    });
+    return await response.json();
+}
+
+// ============================================
+// COMPRA DE PRODUCTOS
+// ============================================
+async function buyProduct(productName, points) {
+    const membershipNumber = prompt('Ingresa tu número de membresía para canjear:');
+    
+    if (!membershipNumber) {
+        alert('Debes ingresar tu número de membresía');
+        return;
+    }
+    
+    if (!confirm(`¿Deseas canjear ${(points * 100).toLocaleString()} puntos por ${productName}?`)) {
+        return;
+    }
+    
+    const loadingMessage = document.createElement('div');
+    loadingMessage.className = 'loading show';
+    loadingMessage.innerHTML = '<div class="spinner"></div><p>Procesando canje...</p>';
+    document.querySelector('#canjear').appendChild(loadingMessage);
+    
+    try {
+        const memberResponse = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                operation: "getMember",
+                data: { membershipNumber: membershipNumber }
+            })
+        });
+        
+        const memberResult = await memberResponse.json();
+        
+        if (!memberResult.success) {
+            alert('Miembro no encontrado. Verifica tu número de membresía.');
+            return;
+        }
+        
+        if (memberResult.data.points.total < points) {
+            alert(`No tienes suficientes puntos. Necesitas ${points.toLocaleString()} puntos pero solo tienes ${memberResult.data.points.total.toLocaleString()}.`);
+            return;
+        }
+        
+        const transactionResult = await createRedemptionTransaction(
+            memberResult.data.memberId,
+            points, 
+            productName
+        );
+        
+        if (transactionResult.success) {
+            alert(`¡Producto canjeado exitosamente!\n\nProducto: ${productName}\nPuntos utilizados: ${(points * 100).toLocaleString()}\nTransacción: ${transactionResult.data.transactionNumber}`);
+            showSection('perfil');
+        } else {
+            alert('Error al canjear producto: ' + transactionResult.error);
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al procesar el canje. Intenta nuevamente.');
+    } finally {
+        loadingMessage.remove();
+    }
+}
+
+async function createRedemptionTransaction(memberId, amount, productName) {
+    const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            operation: "createTransaction",
+            data: {
+                memberId: memberId,
+                amount: amount,
+                journalSubType: "Product",
+                productName: productName,
+                activityDate: new Date().toISOString().split('T')[0]
+            }
+        })
+    });
+    return await response.json();
+}
+
+async function createAccrualTransaction(memberId, amount, productName, rewardDefinitionId) {
+    const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            operation: "createTransaction",
+            data: {
+                memberId: memberId,
+                amount: amount,
+                journalSubType: "Gamification",
+                productName: productName,
+                rewardDefinitionId: rewardDefinitionId,
+                activityDate: new Date().toISOString().split('T')[0]
+            }
+        })
+    });
+    return await response.json();
+}
+
+// ============================================
+// REDENCIÓN DE VOUCHERS
+// ============================================
+async function redeemVoucher() {
+    const voucherCode = document.getElementById('voucherCode').value.trim().toUpperCase();
+    const membershipNumber = document.getElementById('voucherMembershipNumber').value.trim();
+    const voucherLoading = document.getElementById('voucherLoading');
+    const voucherMessage = document.getElementById('voucherMessage');
+    const voucherResult = document.getElementById('voucherResult');
+    
+    if (!voucherCode) {
+        showVoucherMessage('Por favor, ingresa el código de voucher', 'error');
+        return;
+    }
+    
+    if (!membershipNumber) {
+        showVoucherMessage('Por favor, ingresa tu número de membresía', 'error');
+        return;
+    }
+    
+    voucherLoading.classList.add('show');
+    voucherMessage.classList.remove('show');
+    voucherResult.style.display = 'none';
+    
+    try {
+        const memberResponse = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                operation: "getMember",
+                data: { membershipNumber }
+            })
+        });
+        
+        const memberResult = await memberResponse.json();
+        
+        if (!memberResult.success) {
+            showVoucherMessage('Miembro no encontrado. Verifica tu número de membresía.', 'error');
+            return;
+        }
+        
+        const redeemResponse = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                operation: "redeemVoucher",
+                data: {
+                    voucherCode: voucherCode,
+                    membershipNumber: membershipNumber
+                }
+            })
+        });
+        
+        const redeemResult = await redeemResponse.json();
+        
+        if (redeemResult.success) {
+            displayVoucherResult(redeemResult.data);
+            document.getElementById('voucherCode').value = '';
+            document.getElementById('voucherMembershipNumber').value = '';
+        } else {
+            showVoucherMessage(redeemResult.error || 'Error al redimir voucher', 'error');
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showVoucherMessage('Error al procesar la redención. Intenta nuevamente.', 'error');
+    } finally {
+        voucherLoading.classList.remove('show');
+    }
+}
+
+function displayVoucherResult(voucherData) {
+    document.getElementById('redeemedCode').textContent = voucherData.voucherCode;
+    document.getElementById('redeemedType').textContent = voucherData.type || 'Descuento';
+    document.getElementById('redeemedValue').textContent = voucherData.value || '10% OFF';
+    
+    if (voucherData.expirationDate) {
+        const expiryDate = new Date(voucherData.expirationDate);
+        document.getElementById('redeemedExpiry').textContent = expiryDate.toLocaleDateString('es-ES');
+    } else {
+        document.getElementById('redeemedExpiry').textContent = 'Sin límite';
+    }
+    
+    document.getElementById('voucherResult').style.display = 'block';
+    document.getElementById('voucherResult').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function resetVoucherForm() {
+    document.getElementById('voucherCode').value = '';
+    document.getElementById('voucherMembershipNumber').value = '';
+    document.getElementById('voucherResult').style.display = 'none';
+    document.getElementById('voucherCode').focus();
+}
+
+async function loadActiveVouchers(membershipNumber) {
+    try {
+        const response = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                operation: "getActiveVouchers",
+                data: { membershipNumber }
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success && result.data.vouchers.length > 0) {
+            const vouchersList = document.getElementById('vouchersList');
+            vouchersList.innerHTML = '';
+            
+            result.data.vouchers.forEach(voucher => {
+                const voucherCard = document.createElement('div');
+                voucherCard.style.cssText = 'background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 25px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.2);';
+                voucherCard.innerHTML = `
+                    <div style="font-size: 14px; opacity: 0.8; margin-bottom: 10px;">${voucher.type}</div>
+                    <div style="font-size: 24px; font-weight: bold; margin-bottom: 15px;">${voucher.value}</div>
+                    <div style="background: rgba(255,255,255,0.2); padding: 10px; border-radius: 5px; font-family: monospace;">
+                        ${voucher.code}
+                    </div>
+                    <div style="font-size: 12px; opacity: 0.8; margin-top: 10px;">
+                        Válido hasta: ${new Date(voucher.expirationDate).toLocaleDateString('es-ES')}
+                    </div>
+                `;
+                vouchersList.appendChild(voucherCard);
+            });
+            
+            document.getElementById('activeVouchers').style.display = 'block';
+        }
+    } catch (error) {
+        console.error('Error cargando vouchers activos:', error);
+    }
+}
+// ============================================
+// COMPRA DE PRODUCTOS CON DINERO
+// ============================================
+async function purchaseProduct(productName, price, pointsToEarn) {
+    const membershipNumber = prompt('Ingresa tu número de membresía para completar la compra:');
+    
+    if (!membershipNumber) {
+        alert('Debes ingresar tu número de membresía para continuar');
+        return;
+    }
+    
+    if (!confirm(`¿Deseas comprar ${productName} por €${price}?\n\nGanarás ${pointsToEarn.toLocaleString()} puntos automáticamente.`)) {
+        return;
+    }
+    
+    const loadingMessage = document.createElement('div');
+    loadingMessage.className = 'loading show';
+    loadingMessage.innerHTML = '<div class="spinner"></div><p>Procesando compra...</p>';
+    document.querySelector('#tienda').appendChild(loadingMessage);
+    
+    try {
+        // Verificar que el miembro existe
+        const memberResponse = await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                operation: "getMember",
+                data: { membershipNumber: membershipNumber }
+            })
+        });
+        
+        const memberResult = await memberResponse.json();
+        
+        if (!memberResult.success) {
+            alert('Miembro no encontrado. Verifica tu número de membresía.');
+            return;
+        }
+        
+        // Crear transacción de compra (Accrual Purchase)
+        const purchaseResult = await createPurchaseTransaction(
+            memberResult.data.memberId,
+            pointsToEarn,
+            productName,
+            price
+        );
+        
+        if (purchaseResult.success) {
+            alert(`¡Compra realizada exitosamente! 🎉\n\nProducto: ${productName}\nPrecio: €${price}\nPuntos ganados: ${pointsToEarn.toLocaleString()}\nTransacción: ${purchaseResult.data.transactionNumber}\n\n¡Gracias por tu compra!`);
+            
+            // Opcional: Redirigir al perfil para ver los puntos actualizados
+            setTimeout(() => {
+                document.getElementById('searchInput').value = membershipNumber;
+                showSection('perfil');
+                searchProfile();
+            }, 1000);
+        } else {
+            alert('Error al procesar la compra: ' + purchaseResult.error);
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error al procesar la compra. Intenta nuevamente.');
+    } finally {
+        loadingMessage.remove();
+    }
+}
+
+async function createPurchaseTransaction(memberId, pointsToEarn, productName, price) {
+    const response = await fetch(WORKER_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            operation: "createTransaction",
+            data: {
+                memberId: memberId,
+                amount: pointsToEarn, // Puntos que se acreditarán
+                journalSubType: "Purchase",
+                productName: productName,
+                transactionAmount: price, // Precio real del producto
+                activityDate: new Date().toISOString().split('T')[0]
+            }
+        })
+    });
+    return await response.json();
+}
+
+function showVoucherMessage(text, type) {
+    const voucherMessage = document.getElementById('voucherMessage');
+    voucherMessage.textContent = text;
+    voucherMessage.className = `message ${type} show`;
+}
+
+// ============================================
+// FUNCIONES AUXILIARES
+// ============================================
+function generateMembershipNumber() {
+    const prefix = 'LM';
+    const timestamp = Date.now().toString().slice(-8);
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    return `${prefix}${timestamp}${random}`;
+}
+
+function showMessage(text, type) {
+    messageDiv.textContent = text;
+    messageDiv.className = `message ${type} show`;
+}
+
+function showProfileMessage(text, type) {
+    const profileMessage = document.getElementById('profileMessage');
+    profileMessage.textContent = text;
+    profileMessage.className = `message ${type} show`;
+}
+
+function showWheelLoginMessage(text, type) {
+    loginMessage.textContent = text;
+    loginMessage.className = `message ${type} show`;
 }
