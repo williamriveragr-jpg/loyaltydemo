@@ -313,7 +313,7 @@ function initWheel() {
         // Calcular posición del texto (en el centro del segmento)
         const centerAngle = startAngle + (segmentAngle / 2);
         const centerRad = (centerAngle - 90) * Math.PI / 180; // -90 para que 0° esté arriba
-        const radius = 60; // Porcentaje desde el centro
+        const radius = 50; // Distancia desde el centro (en porcentaje)
         
         const x = 50 + radius * Math.cos(centerRad);
         const y = 50 + radius * Math.sin(centerRad);
@@ -321,13 +321,19 @@ function initWheel() {
         label.style.position = 'absolute';
         label.style.left = `${x}%`;
         label.style.top = `${y}%`;
-        label.style.transform = `translate(-50%, -50%) rotate(${centerAngle}deg)`;
+        
+        // IMPORTANTE: Rotar el texto para que apunte hacia afuera
+        // Ajustamos el ángulo para que sea perpendicular al radio
+        const textRotation = centerAngle;
+        label.style.transform = `translate(-50%, -50%) rotate(${textRotation}deg)`;
+        
         label.style.color = 'white';
-        label.style.fontSize = '13px';
+        label.style.fontSize = '12px';
         label.style.fontWeight = 'bold';
         label.style.textShadow = '1px 1px 3px rgba(0,0,0,0.8)';
         label.style.whiteSpace = 'nowrap';
         label.style.pointerEvents = 'none';
+        label.style.textAlign = 'center';
         
         label.setAttribute('data-prize-id', prize.id);
         label.setAttribute('data-prize-index', index);
@@ -342,7 +348,6 @@ function initWheel() {
     
     console.log('✅ Ruleta inicializada con conic-gradient');
 }
-
 async function spinWheel() {
     if (isSpinning) return;
     
