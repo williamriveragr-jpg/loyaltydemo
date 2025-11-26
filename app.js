@@ -325,18 +325,17 @@ function initWheel() {
         label.style.left = `${x}%`;
         label.style.top = `${y}%`;
         
-        // Rotar el texto para que esté vertical (perpendicular al radio)
-        // centerAngle apunta hacia afuera, +90 lo hace vertical
-        label.style.transform = `translate(-50%, -50%) rotate(${centerAngle + 90}deg)`;
+        // Rotar el texto para que apunte radialmente (SIN +90 = horizontal)
+        label.style.transform = `translate(-50%, -50%) rotate(${centerAngle}deg)`;
         
         label.style.color = 'white';
-        label.style.fontSize = '13px';
+        label.style.fontSize = '9px';
         label.style.fontWeight = 'bold';
-        label.style.textShadow = '2px 2px 4px rgba(0,0,0,0.8)';
+        label.style.textShadow = '1px 1px 3px rgba(0,0,0,0.9)';
         label.style.whiteSpace = 'nowrap';
         label.style.pointerEvents = 'none';
         label.style.textAlign = 'center';
-        label.style.letterSpacing = '0.5px';
+        label.style.letterSpacing = '0.3px';
         
         label.setAttribute('data-prize-id', prize.id);
         label.setAttribute('data-prize-index', index);
