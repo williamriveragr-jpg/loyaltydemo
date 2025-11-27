@@ -884,7 +884,7 @@ async function purchaseProduct(productName, price, pointsToEarn) {
         return;
     }
     
-    if (!confirm(`¿Deseas comprar ${productName} por €${price}?\n\nGanarás ${pointsToEarn.toLocaleString()} puntos automáticamente.`)) {
+    if (!confirm(`¿Deseas comprar ${productName} por €${price}?\n\nGanarás ${(pointsToEarn * 4).toLocaleString()} puntos automáticamente.`)) {
         return;
     }
     
