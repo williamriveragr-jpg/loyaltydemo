@@ -171,7 +171,6 @@ function displayProfile(profile) {
     document.getElementById('profileAvatar').textContent = initials;
     document.getElementById('profileName').textContent = `${profile.contact.firstName} ${profile.contact.lastName}`;
     document.getElementById('profileTier').textContent = profile.tier;
-    document.getElementById('totalPoints').textContent = profile.points.total.toLocaleString();
     document.getElementById('memberSince').textContent = profile.memberSince;
     document.getElementById('profileEmail').textContent = profile.contact.email;
     document.getElementById('profilePhone').textContent = profile.contact.phone;
