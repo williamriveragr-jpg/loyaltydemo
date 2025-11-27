@@ -814,7 +814,6 @@ async function redeemVoucher() {
 function displayVoucherResult(voucherData) {
     document.getElementById('redeemedCode').textContent = voucherData.voucherCode;
     document.getElementById('redeemedType').textContent = voucherData.type || 'Descuento';
-    document.getElementById('redeemedValue').textContent = voucherData.value || '10% OFF';
     
     if (voucherData.expirationDate) {
         const expiryDate = new Date(voucherData.expirationDate);
