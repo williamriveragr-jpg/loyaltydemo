@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
             phone: document.getElementById('phone').value.trim(),
             birthDate: document.getElementById('birthDate').value,
             programId: PROGRAM_ID,
-            enrollmentChannel: document.getElementById('enrollmentChannel').value
+            enrollmentChannel: 'Web'
         };
     
         document.getElementById('membershipNumber').value = membershipNumber;
@@ -175,7 +175,6 @@ function displayProfile(profile) {
     document.getElementById('profileEmail').textContent = profile.contact.email;
     document.getElementById('profilePhone').textContent = profile.contact.phone;
     document.getElementById('profileMembership').textContent = profile.membershipNumber;
-    document.getElementById('profileChannel').textContent = profile.enrollmentChannel;
     
     const enrollmentDate = new Date(profile.enrollmentDate);
     document.getElementById('profileEnrollmentDate').textContent = enrollmentDate.toLocaleDateString('es-ES');
