@@ -80,8 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
             programId: PROGRAM_ID,
             enrollmentChannel: 'Web'
         };
-    
-        document.getElementById('membershipNumber').value = membershipNumber;
         
         submitBtn.disabled = true;
         loading.classList.add('show');
